@@ -1,131 +1,146 @@
-import { defineStore } from 'pinia';
-import { db } from '../firebase';
-import { collection, query, where, getDocs, updateDoc, doc, setDoc } from 'firebase/firestore';
+import { defineStore } from "pinia";
+import { db } from "../firebase";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  updateDoc,
+  doc,
+  setDoc,
+} from "firebase/firestore";
 
-export const useUserStore = defineStore('user', {
+export const useUserStore = defineStore("user", {
   state: () => ({
     currentUser: null,
     userStatus: null,
   }),
 
   actions: {
+    // Validar DNI y verificar que COD existe
     async validateDNI(dni) {
       try {
-        const estudiantesRef = collection(db, 'estudiantes');
+        const estudiantesRef = collection(db, "estudiantes");
         const q = query(estudiantesRef, where("DNI", "==", dni));
         const querySnapshot = await getDocs(q);
-        return !querySnapshot.empty;
+
+        if (!querySnapshot.empty) {
+          // Obtenemos el primer documento coincidente
+          const docSnapshot = querySnapshot.docs[0];
+          const data = docSnapshot.data();
+
+          // Validar que COD exista
+          if (data.COD) {
+            return data; // Retornar datos del usuario si COD está presente
+          } else {
+            return null; // Retornar null si COD no está presente
+          }
+        } else {
+          return null; // Retornar null si no se encuentra el documento
+        }
       } catch (error) {
-        console.error('Error validando DNI:', error);
-        return false;
+        console.error("Error validando DNI:", error);
+        return null;
       }
     },
 
+    // Registrar un participante con sus datos iniciales
     async registerParticipant(userData) {
       try {
         const { dni, code, fullName } = userData;
-        await setDoc(doc(db, 'estudiantes', dni), {
-          dni,
-          code,
+        await setDoc(doc(db, "estudiantes", dni), {
+          DNI: dni,
+          COD: code,
           fullName,
-          status: 'no_registrado',
+          status: "no_registrado",
         });
 
         // Guardar en localStorage
-        localStorage.setItem('userInfo', JSON.stringify(userData));
+        localStorage.setItem("userInfo", JSON.stringify(userData));
         return true;
       } catch (error) {
-        console.error('Error registering participant:', error);
+        console.error("Error registrando participante:", error);
         return false;
       }
     },
 
+    // Validar si un usuario es administrador
     async validateAdmin(username) {
-      const adminsRef = collection(db, 'admins');
-      const q = query(adminsRef, where("username", "==", username));
-      const querySnapshot = await getDocs(q);
-      return !querySnapshot.empty;
+      try {
+        const adminsRef = collection(db, "admins");
+        const q = query(adminsRef, where("username", "==", username));
+        const querySnapshot = await getDocs(q);
+        return !querySnapshot.empty;
+      } catch (error) {
+        console.error("Error validando administrador:", error);
+        return false;
+      }
     },
 
+    // Actualizar estado del participante por un administrador
     async updateParticipantStatusToAdmin(dni) {
       try {
-        // Primero buscamos el documento por el campo DNI
-        const estudiantesRef = collection(db, 'estudiantes');
+        const estudiantesRef = collection(db, "estudiantes");
         const q = query(estudiantesRef, where("DNI", "==", dni));
         const querySnapshot = await getDocs(q);
 
         if (querySnapshot.empty) {
-          return { success: false, message: 'Usuario no encontrado' };
+          return { success: false, message: "Usuario no encontrado" };
         }
 
-        // Obtenemos el primer documento que coincida
         const docSnapshot = querySnapshot.docs[0];
         const userData = docSnapshot.data();
-        const docRef = doc(db, 'estudiantes', docSnapshot.id);
+        const docRef = doc(db, "estudiantes", docSnapshot.id);
 
-        // Lógica para cambiar el estado
-        if (userData.status === 'registrado') {
+        if (userData.status === "registrado") {
           return {
             success: false,
-            message: 'Usuario ya uso su entrada',
-            data: userData
+            message: "El usuario ya está registrado",
+            data: userData,
           };
         }
 
-        // Actualizamos el estado a 'registrado'
-        await updateDoc(docRef, {
-          status: 'registrado'
-        });
-
-        // Actualizamos userData con el nuevo estado
-        userData.status = 'registrado';
+        // Actualizar estado a 'registrado'
+        await updateDoc(docRef, { status: "registrado" });
+        userData.status = "registrado";
 
         return {
           success: true,
-          message: 'Usuario registrado exitosamente',
-          data: userData
+          message: "Usuario registrado exitosamente",
+          data: userData,
         };
-
       } catch (error) {
-        console.error('Error al actualizar estado:', error);
-        return {
-          success: false,
-          message: error.message
-        };
+        console.error("Error al actualizar estado:", error);
+        return { success: false, message: error.message };
       }
     },
 
+    // Actualizar estado del participante
     async updateParticipantStatus(dni) {
       try {
-        // Primero buscamos el documento por el campo DNI
-        const estudiantesRef = collection(db, 'estudiantes');
+        const estudiantesRef = collection(db, "estudiantes");
         const q = query(estudiantesRef, where("DNI", "==", dni));
         const querySnapshot = await getDocs(q);
 
         if (querySnapshot.empty) {
-          return { success: false, message: 'Usuario no encontrado' };
+          return { success: false, message: "Usuario no encontrado" };
         }
 
-        // Obtenemos el primer documento que coincida
         const docSnapshot = querySnapshot.docs[0];
         const userData = docSnapshot.data();
-        const docRef = doc(db, 'estudiantes', docSnapshot.id);
+        const docRef = doc(db, "estudiantes", docSnapshot.id);
 
-        // Verificamos si existe el campo status
-        if (!userData.hasOwnProperty('status')) {
-          // Si no existe el campo status, lo creamos como 'no_registrado'
-          await updateDoc(docRef, {
-            status: 'no_registrado'
-          });
-          // Actualizamos userData con el nuevo campo
-          userData.status = 'no_registrado';
+        // Verificar si existe el campo 'status', si no existe, agregarlo
+        if (!userData.hasOwnProperty("status")) {
+          await updateDoc(docRef, { status: "no_registrado" });
+          userData.status = "no_registrado";
         }
 
-        return true
+        return { success: true, message: "Estado actualizado", data: userData };
       } catch (error) {
-        console.error('Error al actualizar estado:', error);
-        return false
+        console.error("Error al actualizar estado:", error);
+        return { success: false, message: error.message };
       }
     },
-  }
+  },
 });

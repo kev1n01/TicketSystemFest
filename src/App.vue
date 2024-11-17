@@ -7,10 +7,10 @@
 </template>
 
 <script setup>
-import { onMounted } from "vue";
+// import { onMounted } from "vue";
 
-// Limpia el localStorage al cargar la aplicación
-onMounted(() => {
-  localStorage.clear();
-});
+// // Limpia el localStorage al cargar la aplicación
+// onMounted(() => {
+//   localStorage.clear();
+// });
 </script>

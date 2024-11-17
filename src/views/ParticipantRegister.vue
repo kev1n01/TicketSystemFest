@@ -83,36 +83,29 @@ const handleSubmit = async () => {
   try {
     loading.value = true;
 
-    // Validar que los campos DNI y COD estén completos
     if (!formData.value.dni || !formData.value.cod) {
       alert("Por favor, completa los campos de DNI y Código.");
       loading.value = false;
       return;
     }
 
-    // Validar que el DNI exista y coincida con el COD
     const participant = await userStore.validateDNI(formData.value.dni);
     if (!participant || participant.COD !== formData.value.cod) {
-      alert(
-        "DNI no encontrado o el Código no coincide con los datos en la base de datos."
-      );
+      alert("DNI no encontrado o el Código no coincide con los datos en la base de datos.");
       loading.value = false;
       return;
     }
 
-    // Mostrar información del participante (opcional)
-    console.log("Datos del participante:", participant);
+    // Concatenar nombres completos
+    const fullName = `${participant.PATERNO} ${participant.MATERNO} ${participant.NOMBRES}`;
 
-    // Actualizar el estado del participante
     const success = await userStore.updateParticipantStatus(formData.value.dni);
     if (success) {
-      console.log("Participante registrado exitosamente");
-      // Generar QR
       const qrCode = await QRCode.toDataURL(formData.value.dni);
       localStorage.setItem("userQR", qrCode);
       localStorage.setItem(
         "userInfo",
-        JSON.stringify({ dni: formData.value.dni, cod: participant.COD })
+        JSON.stringify({ dni: formData.value.dni, code: participant.COD, fullName })
       );
       router.push("/participant-details");
     }
@@ -123,4 +116,5 @@ const handleSubmit = async () => {
     loading.value = false;
   }
 };
+
 </script>

@@ -25,18 +25,21 @@ export const useUserStore = defineStore("user", {
         const querySnapshot = await getDocs(q);
 
         if (!querySnapshot.empty) {
-          // Obtenemos el primer documento coincidente
           const docSnapshot = querySnapshot.docs[0];
           const data = docSnapshot.data();
 
-          // Validar que COD exista
           if (data.COD) {
-            return data; // Retornar datos del usuario si COD está presente
+            return {
+              COD: data.COD,
+              PATERNO: data.PATERNO,
+              MATERNO: data.MATERNO,
+              NOMBRES: data.NOMBRES,
+            };
           } else {
-            return null; // Retornar null si COD no está presente
+            return null;
           }
         } else {
-          return null; // Retornar null si no se encuentra el documento
+          return null;
         }
       } catch (error) {
         console.error("Error validando DNI:", error);

@@ -72,6 +72,7 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "../stores/userStore";
 import { LoaderCircle } from "lucide-vue-next";
+import speaker from "../speaker";
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -106,6 +107,8 @@ const handleSubmit = async () => {
 
     if (result.success) {
       messageValidateSuccess.value = result.message;
+      speaker(result.message);
+
       setTimeout(() => {
         router.push("/participant-details");
       }, 2000);

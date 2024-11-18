@@ -2,12 +2,17 @@
 import { useUserStore } from '../stores/userStore';
 import { Terminal, Ticket, LogOut } from 'lucide-vue-next'
 import { useRouter } from "vue-router";
+import speaker from '../speaker';
 
 const router = useRouter();
 const userStore = useUserStore();
 
 const handleLogout = (redirect = "/home") => {
-
+    if (redirect === "/admin"){
+        speaker(`Adiós adminsito bello o bella`);
+    }else{
+        speaker(`Adiós ${userStore.userFullName}`);
+    }
     userStore.logout();
     router.push(redirect);
 };

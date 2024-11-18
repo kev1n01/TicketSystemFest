@@ -57,7 +57,7 @@ export const useUserStore = defineStore("user", () => {
       if (userData.status === "registrado") {
         return {
           success: false,
-          message: "Este usuario ya utilizó su entrada.",
+          message: `${userData.NOMBRES} ya utilizó su entrada.`,
           data: userData,
         };
       }
@@ -68,7 +68,7 @@ export const useUserStore = defineStore("user", () => {
 
       return {
         success: true,
-        message: "Entrada registrado exitosamente",
+        message: `Entrada registrado exitosamente, bienvenido ${userData.NOMBRES} diviertete.`,
         data: userData,
       };
     } catch (error) {
@@ -107,11 +107,11 @@ export const useUserStore = defineStore("user", () => {
       userFullName.value = `${userData.PATERNO} ${userData.MATERNO} ${userData.NOMBRES}`;
 
       if (userData.status === "no_registrado") {
-        return { success: true, message: "Ticket generado exitosamente" };
+        return { success: true, message: `Hola, ${userData.NOMBRES}. tu ticket se generó correctamente` };
       } else {
         return {
           success: true,
-          message: `Bienvenido de nuevo ${userData.NOMBRES} 🥳💖`,
+          message: `Bienvenido de nuevo ${userData.NOMBRES}, recuerda tener a la mano el qr para ingresar.`,
         };
       }
     } catch (error) {

@@ -8,8 +8,12 @@
           Escáner QR
         </h2>
 
-        <!-- Escáner -->
-        <div id="reader" class="mx-auto mb-6" style="width: 100%; aspect-ratio: 2 / 1;"></div>
+        <div class="scanner-container">
+          <!-- Escáner -->
+          <div id="reader" class="scanner mx-auto" style="width: 100%; aspect-ratio: 2 / 1;"></div>
+          <!-- Barra de animación -->
+          <div class="scanner-bar"></div>
+        </div>
 
         <!-- Skeleton Loader -->
         <div v-if="loading" class="animate-pulse">
@@ -22,7 +26,7 @@
         </div>
 
         <!-- Información del Participante -->
-        <div v-else v-if="participantData" class="mb-6 animate-fade-in">
+        <div v-else v-if="participantData" class="mb-6 animate-fade-in mt-5">
           <div>
             <p v-if="messageValidateError !== ''"
               class="text-red-600 text-sm md:text-base mb-4 font-semibold text-center p-2 bg-red-300/40 border border-red-400 rounded-md">
@@ -58,17 +62,22 @@ import { ref, onMounted, onUnmounted } from "vue";
 import { Html5Qrcode } from "html5-qrcode";
 import { useUserStore } from "../stores/userStore";
 import DashLayout from "../layout/DashLayout.vue";
+import speaker from "../speaker";
 
 const userStore = useUserStore();
 const participantData = ref(null);
 const messageValidateError = ref(""); // Para manejar mensajes de error
 const messageValidateSuccess = ref(""); // Para manejar mensajes de éxito
 const loading = ref(false); // Estado para el skeleton loader
+const isScanning = ref(false); // Estado para controlar si ya se está procesando un código
 
 let html5QrCode = null;
 
 // Manejo del escaneo QR
 const onDecode = async (decodedString) => {
+  if (isScanning.value) return; // Evitar múltiples escaneos
+
+  isScanning.value = true; // Bloquear nuevos escaneos mientras se procesa
   try {
     messageValidateError.value = "";
     messageValidateSuccess.value = "";
@@ -81,18 +90,20 @@ const onDecode = async (decodedString) => {
         participantData.value = result.data;
       }
       messageValidateError.value = result.message;
-      loading.value = false; // Ocultar el loader
+      speaker(result.message);
       return;
     }
 
     if (result.success) {
       participantData.value = result.data;
       messageValidateSuccess.value = result.message;
+      speaker(result.message);
     }
   } catch (error) {
     messageValidateError.value = "Ocurrió un error durante el escaneo. Intenta nuevamente.";
   } finally {
     loading.value = false; // Ocultar el loader siempre
+    isScanning.value = false; // Desbloquear escaneo
   }
 };
 
@@ -105,13 +116,13 @@ const startScanner = () => {
       { facingMode: "environment" },
       {
         fps: 10, // Frames por segundo
-        qrbox: 250, // Área del escaneo
+        qrbox: { width: 250, height: 400 }, // Área del escaneo
       },
       (decodedText) => {
         onDecode(decodedText);
       },
       (errorMessage) => {
-        console.warn("Escaneo fallido:", errorMessage);
+        // console.warn("Escaneo fallido:", errorMessage);
       }
     )
     .catch((err) => {
@@ -148,5 +159,59 @@ onUnmounted(() => {
 
 .animate-fade-in {
   animation: fade-in 0.5s ease-out;
+}
+
+.scanner-container {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  /* Ajusta el ancho máximo según tus necesidades */
+  height: 300px;
+  /* Alto fijo */
+  background: black;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Escáner */
+.scanner {
+  position: absolute;
+  width: 100%;
+  height: 150px !important;
+  background: rgba(0, 0, 0, 0.1);
+  padding-top: 0px;
+}
+
+/* Barra animada */
+.scanner-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  opacity: 0.5;
+  /* Altura de la barra */
+  background: linear-gradient(to bottom, #0088ff, #0088ff);
+  animation: scan-bar 5s infinite;
+  box-shadow: 0 0 10px 2px rgba(0, 0, 255, 0.5);
+  z-index: 1;
+}
+
+/* Animación de la barra */
+@keyframes scan-bar {
+  0% {
+    top: 0;
+  }
+
+  50% {
+    top: 90%;
+    /* Baja al 90% del contenedor */
+  }
+
+  100% {
+    top: 0;
+    /* Regresa al inicio */
+  }
 }
 </style>

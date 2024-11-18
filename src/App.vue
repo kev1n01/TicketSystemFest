@@ -1,8 +1,6 @@
 <template>
-  <div id="app" class="flex flex-col">  
-    <main class="flex-1">
-      <router-view />
-    </main>
+  <div>
+    <router-view />
   </div>
 </template>
 
@@ -14,3 +12,7 @@
 //   localStorage.clear();
 // });
 </script>
+
+<style scoped>
+
+</style>

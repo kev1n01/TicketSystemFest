@@ -9,7 +9,18 @@ module.exports = {
       },
       fontFamily: {
         sans: ['Arial', 'sans-serif'],
+        epilogue: ['Epilogue', 'sans-serif'],
+        russo: ['"Russo One"', 'sans-serif'],
       },
+      screens: { // tamaños de pantalla personalizados
+        'xs': '360px',
+        'sm': '640px',
+        'md': '768px',
+        'lg': '1024px',
+        'xl': '1280px',
+        '2xl': '1536px',
+      },
+
     },
   },
   plugins: [],

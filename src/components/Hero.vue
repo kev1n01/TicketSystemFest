@@ -1,4 +1,8 @@
 <script setup>
+import ButtonPrimarySecondEffect from './ButtonPrimarySecondEffect.vue';
+import { useUserStore } from "../stores/userStore";
+
+const userStore = useUserStore();
 </script>
 <template>
     <section id="hero">
@@ -23,11 +27,13 @@
                         System Fest
                     </h1>
 
-                    <div class="flex justify-center gap-4 text-base md:text-lg animate-fade-in-up">
-                        <span class="bg-black/80 px-6 py-3 rounded-3xl backdrop-blur-sm border border-red-500/40 hover:shadow-red-500/20 hover:shadow-xl">
+                    <div class="flex flex-wrap justify-center gap-4 text-sm sm:text-base md:text-lg animate-fade-in-up">
+                        <span
+                            class="w-full sm:w-[150px] md:w-[200px] text-center bg-black/80 px-4 sm:px-6 py-3 rounded-3xl backdrop-blur-sm border border-red-500/40 hover:shadow-red-500/20 hover:shadow-xl">
                             Noviembre 29
                         </span>
-                        <span class="bg-black/50 px-6 py-3 rounded-3xl backdrop-blur-sm border border-red-500/40 hover:shadow-red-500/20 hover:shadow-xl">
+                        <span
+                            class="w-full sm:w-[150px] md:w-[200px] text-center bg-black/80 px-4 sm:px-6 py-3 rounded-3xl backdrop-blur-sm border border-red-500/40 hover:shadow-red-500/20 hover:shadow-xl">
                             Mistika casa club
                         </span>
                     </div>
@@ -43,28 +49,28 @@
                 <p>Para ingresar al evento, primero debes generar tu ticket digital como invitado o estudiante.
                 </p>
             </div>
-
             <div class="group">
-                <div
-                    class="py-8 px-6 rounded-xl bg-white backdrop-blur-sm text-center transition-all">
+                <div class="py-8 px-6 rounded-xl bg-white backdrop-blur-sm text-center transition-all">
                     <h3 class="text-2xl font-bold text-black lg:text-base">Ticket invitado</h3>
                     <p class="py-3 min-h-20 text-black">Genera tu ticket digital como invitado</p>
-                    <a href="/generate-ticket"
-                        class="inline-block bg-red-800/80 hover:bg-red-700 px-6 py-2 rounded-xl transition-all w-full">
-                        Generar
-                    </a>
+                    <div class="flex justify-center">
+                        <ButtonPrimarySecondEffect
+                            class="w-full max-w-[300px] sm:max-w-[400px] md:max-w-[500px] lg:max-w-[900px]"
+                            :label="userStore.userHashCode ? 'Ver mi ticket' : 'Generar'"
+                            :link="userStore.userHashCode ? '/generate-ticket' : '/participant-details'" />
+                    </div>
                 </div>
             </div>
-
             <div class="group">
-                <div
-                    class="py-8 px-6 rounded-xl bg-white backdrop-blur-sm text-center transition-all">
+                <div class="py-8 px-6 rounded-xl bg-white backdrop-blur-sm text-center transition-all">
                     <h3 class="text-2xl font-bold text-black lg:text-base">Ticket estudiante</h3>
-                    <p class="py-3 min-h-20 text-black">Genera tu ticket digital de ingreso </p>
-                    <a href="/generate-ticket"
-                        class="inline-block bg-red-800/80 hover:bg-red-700 px-6 py-2 rounded-xl transition-all w-full">
-                        Generar
-                    </a>
+                    <p class="py-3 min-h-20 text-black">Genera tu ticket digital de ingreso</p>
+                    <div class="flex justify-center">
+                        <ButtonPrimarySecondEffect
+                            class="w-full max-w-[300px] sm:max-w-[400px] md:max-w-[500px] lg:max-w-[900px]"
+                            :label="userStore.userHashCode ? 'Ver mi ticket' : 'Generar'"
+                            :link="userStore.userHashCode ? '/generate-ticket' : '/participant-details'" />
+                    </div>
                 </div>
             </div>
         </div>
@@ -94,5 +100,4 @@
     mask-image: linear-gradient(to right, transparent, black 50%, transparent);
     -webkit-mask-image: linear-gradient(to right, transparent, black 80%, transparent);
 }
-
 </style>

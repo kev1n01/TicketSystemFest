@@ -10,11 +10,17 @@ const NotFound = () => import('../views/NotFound.vue');
 
 const routes = [
   {
-    path: '/',
-    redirect: '/register'
+    path: '/home',
+    name: 'home',
+    component: () => import('../views/Home.vue'),
+    meta: { requiresNoAuth: true }
   },
   {
-    path: '/register',
+    path: '/',
+    redirect: '/home'
+  },
+  {
+    path: '/generate-ticket',
     name: 'ParticipantRegister',
     component: ParticipantRegister,
     meta: { requiresNoAuth: true }
@@ -24,14 +30,6 @@ const routes = [
     name: 'ParticipantDetails',
     component: ParticipantDetails,
     meta: { requiresParticipant: true },
-    beforeEnter: (to, from, next) => {
-      const userInfo = localStorage.getItem('userInfo');
-      if (userInfo) {
-        next();
-      } else {
-        next('/register');
-      }
-    }
   },
   {
     path: '/admin',
@@ -44,19 +42,12 @@ const routes = [
     name: 'AdminScanner',
     component: AdminScanner,
     meta: { requiresAdmin: true },
-    beforeEnter: (to, from, next) => {
-      const adminSession = localStorage.getItem('adminSession');
-      if (adminSession) {
-        next();
-      } else {
-        next('/admin');
-      }
-    }
   },
   {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
-    component: NotFound
+    component: NotFound,
+    meta: { requiresNoAuth: true }
   }
 ];
 
@@ -68,28 +59,26 @@ const router = createRouter({
 // Navigation Guards
 router.beforeEach((to, from, next) => {
   const userStore = useUserStore();
-  const adminSession = localStorage.getItem('adminSession');
-  const userInfo = localStorage.getItem('userInfo');
 
   // Rutas que requieren ser admin
-  if (to.meta.requiresAdmin && !adminSession) {
+  if (to.meta.requiresAdmin && !userStore.userHashCode) {
     next('/admin');
     return;
   }
 
   // Rutas que requieren ser participante
-  if (to.meta.requiresParticipant && !userInfo) {
-    next('/register');
+  if (to.meta.requiresParticipant && !userStore.userHashCode) {
+    next('/generate-ticket');
     return;
   }
 
   // Rutas que requieren no estar autenticado
   if (to.meta.requiresNoAuth) {
-    if (adminSession) {
+    if (userStore.username !== null && to.path === '/admin') {
       next('/scanner');
       return;
     }
-    if (userInfo && to.path === '/register') {
+    if (userStore.userQr !== null && to.path === '/generate-ticket') {
       next('/participant-details');
       return;
     }

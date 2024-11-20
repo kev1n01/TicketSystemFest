@@ -56,11 +56,11 @@ const userStore = useUserStore();
                     <div class="flex justify-center">
                         <ButtonPrimarySecondEffect
                             class="w-full max-w-[300px] sm:max-w-[400px] md:max-w-[500px] lg:max-w-[900px]"
-                            :label="userStore.userHashCode ? 'Ver mi ticket' : 'Generar'"
-                            :link="userStore.userHashCode ? '/generate-ticket' : '/participant-details'" />
-                    </div>
+                            :label="userStore.userHashCode != null ? 'Ver mi ticket' : 'Generar'"
+                            :link="userStore.userHashCode == null ? '/generate-ticket' : '/participant-details'" />
+                    </div>s
                 </div>
-            </div>
+            </div> 
             <div class="group">
                 <div class="py-8 px-6 rounded-xl bg-white backdrop-blur-sm text-center transition-all">
                     <h3 class="text-2xl font-bold text-black lg:text-base">Ticket estudiante</h3>
@@ -68,8 +68,8 @@ const userStore = useUserStore();
                     <div class="flex justify-center">
                         <ButtonPrimarySecondEffect
                             class="w-full max-w-[300px] sm:max-w-[400px] md:max-w-[500px] lg:max-w-[900px]"
-                            :label="userStore.userHashCode ? 'Ver mi ticket' : 'Generar'"
-                            :link="userStore.userHashCode ? '/generate-ticket' : '/participant-details'" />
+                            :label="userStore.userHashCode == null ? 'Ver mi ticket' : 'Generar'"
+                            :link="userStore.userHashCode == null ? '/generate-ticket' : '/participant-details'" />
                     </div>
                 </div>
             </div>

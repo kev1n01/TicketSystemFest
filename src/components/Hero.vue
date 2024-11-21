@@ -18,22 +18,23 @@ const userStore = useUserStore();
             <!-- Content -->
             <div class="relative min-h-[70vh] flex items-center justify-center">
                 <div class="text-center space-y-10 px-4">
-                    <div class="font-semibold lg:text-3xl text-xl animate-fade-in-down font-epilogue">
+                    <div class="font-semibold lg:text-2xl text-xl animate-fade-in-down font-epilogue">
                         <p> 32 aniversario</p>
                         <span>Ingeniería de sistemas e informática</span>
                     </div>
 
-                    <h1 class="text-6xl md:text-8xl font-bold text-white animate-fade-in-up float-animation font-russo">
+                    <h1 class="text-6xl md:text-[9rem] leading-none font-bold animate-pulse2 font-dastress tracking-wider text-shadow-redGlow">
                         System Fest
                     </h1>
 
                     <div class="flex flex-wrap justify-center gap-4 text-sm sm:text-base md:text-lg animate-fade-in-up">
-                        <span
-                            class="w-full sm:w-[150px] md:w-[200px] text-center bg-black/80 px-4 sm:px-6 py-3 rounded-3xl backdrop-blur-sm border border-red-500/40 hover:shadow-red-500/20 hover:shadow-xl">
+                        <span class="w-autotext-center bg-red-200/10 rounded-lg px-4 sm:px-3 py-2  backdrop-blur-md">
                             Noviembre 29
                         </span>
-                        <span
-                            class="w-full sm:w-[150px] md:w-[200px] text-center bg-black/80 px-4 sm:px-6 py-3 rounded-3xl backdrop-blur-sm border border-red-500/40 hover:shadow-red-500/20 hover:shadow-xl">
+                        <span class="w-autotext-center bg-red-200/10 rounded-lg px-4 sm:px-3 py-2  backdrop-blur-md">
+                            01:00 PM - next day
+                        </span>
+                        <span class="w-autotext-center bg-red-200/10 rounded-lg px-4 sm:px-3 py-2  backdrop-blur-md">
                             Mistika casa club
                         </span>
                     </div>
@@ -50,27 +51,27 @@ const userStore = useUserStore();
                 </p>
             </div>
             <div class="group">
-                <div class="py-8 px-6 rounded-xl bg-white backdrop-blur-sm text-center transition-all">
+                <div class="pt-8 px-6 rounded-xl bg-white backdrop-blur-sm text-center transition-all">
                     <h3 class="text-2xl font-bold text-black lg:text-base">Ticket invitado</h3>
                     <p class="py-3 min-h-20 text-black">Genera tu ticket digital como invitado</p>
                     <div class="flex justify-center">
                         <ButtonPrimarySecondEffect
                             class="w-full max-w-[300px] sm:max-w-[400px] md:max-w-[500px] lg:max-w-[900px]"
                             :label="userStore.userHashCode != null ? 'Ver mi ticket' : 'Generar'"
-                            :link="userStore.userHashCode == null ? '/generate-ticket' : '/participant-details'" />
+                            :link="userStore.userHashCode == null ? '/generate-ticket' : '/view-ticket'" />
                     </div>s
                 </div>
-            </div> 
+            </div>
             <div class="group">
-                <div class="py-8 px-6 rounded-xl bg-white backdrop-blur-sm text-center transition-all">
+                <div class="pt-8 px-6 rounded-xl bg-white backdrop-blur-sm text-center transition-all">
                     <h3 class="text-2xl font-bold text-black lg:text-base">Ticket estudiante</h3>
                     <p class="py-3 min-h-20 text-black">Genera tu ticket digital de ingreso</p>
                     <div class="flex justify-center">
                         <ButtonPrimarySecondEffect
                             class="w-full max-w-[300px] sm:max-w-[400px] md:max-w-[500px] lg:max-w-[900px]"
-                            :label="userStore.userHashCode == null ? 'Ver mi ticket' : 'Generar'"
-                            :link="userStore.userHashCode == null ? '/generate-ticket' : '/participant-details'" />
-                    </div>
+                            :label="userStore.userHashCode != null ? 'Ver mi ticket' : 'Generar'"
+                            :link="userStore.userHashCode == null ? '/generate-ticket' : '/view-ticket'" />
+                    </div>s
                 </div>
             </div>
         </div>
@@ -78,23 +79,6 @@ const userStore = useUserStore();
 </template>
 
 <style scoped>
-@keyframes float {
-    0% {
-        transform: translateY(0px);
-    }
-
-    50% {
-        transform: translateY(-10px);
-    }
-
-    100% {
-        transform: translateY(0px);
-    }
-}
-
-.float-animation {
-    animation: float 6s ease-in-out infinite;
-}
 
 #img_hero {
     mask-image: linear-gradient(to right, transparent, black 50%, transparent);

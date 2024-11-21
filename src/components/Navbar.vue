@@ -82,8 +82,9 @@ onUnmounted(() => {
 
             <!-- Button (Right) -->
             <div class="hidden lg:block">
-                <ButtonPrimarySecondEffect class="w-[120px]" :label="userStore.userHashCode ? 'Ver mi ticket' : 'Ingresar'"
-                    :link="userStore.userHashCode == null ? '/generate-ticket' : '/participant-details'" />
+                <ButtonPrimarySecondEffect class="w-[120px]"
+                    :label="userStore.userHashCode != null ? 'Ver mi ticket' : 'Generar'"
+                    :link="userStore.userHashCode == null ? '/generate-ticket' : '/view-ticket'" />
             </div>
 
             <!-- Hamburger Menu (Mobile) -->
@@ -115,8 +116,9 @@ onUnmounted(() => {
                     Auspiciadores
                 </a>
                 <div class="flex justify-center">
-                    <ButtonPrimarySecondEffect class="w-[120px]" :label="userStore.userHashCode ? 'Ver mi ticket' : 'Ingresar'"
-                        :link="userStore.userHashCode == null ? '/generate-ticket' : '/participant-details'" />
+                    <ButtonPrimarySecondEffect class="w-[120px]"
+                        :label="userStore.userHashCode ? 'Ver mi ticket' : 'Generar'"
+                        :link="userStore.userHashCode == null ? '/generate-ticket' : '/view-ticket'" />
                 </div>
             </div>
         </div>

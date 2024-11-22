@@ -40,10 +40,23 @@ export const useUserStore = defineStore("user", () => {
     }
   }
 
-  async function updateParticipantStatusToAdmin(dni) {
+  async function updateParticipantStatusToAdmin(identifier) {
     try {
-      const estudiantesRef = collection(db, "estudiantes");
-      const q = query(estudiantesRef, where("DNI", "==", dni));
+      var collectionName = 'estudiantes'
+      var whereSearch = 'cod'
+      var typeParticipant = 'estudiante'
+      if (identifier.length === 10) {
+        collectionName = 'estudiantes';
+        whereSearch = 'cod'
+        typeParticipant = 'estudiante'
+      } else {
+        collectionName = 'invitados';
+        whereSearch = 'dni'
+        typeParticipant = 'invitado'
+      };
+
+      const estudiantesRef = collection(db, collectionName);
+      const q = query(estudiantesRef, where(whereSearch, "==", identifier));
       const querySnapshot = await getDocs(q);
 
       if (querySnapshot.empty) {
@@ -52,12 +65,13 @@ export const useUserStore = defineStore("user", () => {
 
       const docSnapshot = querySnapshot.docs[0];
       const userData = docSnapshot.data();
-      const docRef = doc(db, "estudiantes", docSnapshot.id);
+      const docRef = doc(db, collectionName, docSnapshot.id);
 
       if (userData.status === "registrado") {
         return {
           success: false,
-          message: `${userData.NOMBRES} ya utilizó su entrada.`,
+          type: typeParticipant,
+          message: `${userData.nombres} ya utilizó su entrada.`,
           data: userData,
         };
       }
@@ -68,7 +82,8 @@ export const useUserStore = defineStore("user", () => {
 
       return {
         success: true,
-        message: `Entrada registrado exitosamente, bienvenido ${userData.NOMBRES} diviertete.`,
+        type: typeParticipant,
+        message: `Entrada registrado exitosamente, bienvenido ${userData.nombres} diviertete.`,
         data: userData,
       };
     } catch (error) {
@@ -76,18 +91,17 @@ export const useUserStore = defineStore("user", () => {
     }
   }
 
-  async function updateParticipantStatus(dni, code) {
+  async function updateParticipantStatus(code) {
     try {
       const estudiantesRef = collection(db, "estudiantes");
       const q = query(
         estudiantesRef,
-        where("DNI", "==", dni),
-        where("COD", "==", code)
+        where("cod", "==", code)
       );
       const querySnapshot = await getDocs(q);
 
       if (querySnapshot.empty) {
-        return { success: false, message: "DNI y/o código incorrectos." };
+        return { success: false, message: "Código incorrecto o no estas registrado como estudiante." };
       }
 
       const docSnapshot = querySnapshot.docs[0];
@@ -100,18 +114,61 @@ export const useUserStore = defineStore("user", () => {
       }
 
       // Actualizar estado de Pinia
-      userQr.value = await QRCode.toDataURL(dni);
-      userDni.value = dni;
+      userQr.value = await QRCode.toDataURL(code);
       userCode.value = code;
-      userHashCode.value = bcrypt.hashSync(dni, 10);
-      userFullName.value = `${userData.PATERNO} ${userData.MATERNO} ${userData.NOMBRES}`;
+      userHashCode.value = bcrypt.hashSync(code, 10);
+      userFullName.value = userData.nombres;
 
       if (userData.status === "no_registrado") {
-        return { success: true, message: `Hola, ${userData.NOMBRES}. tu ticket se generó correctamente` };
+        return { success: true, message: `Hola, ${userData.nombres}. tu ticket se generó correctamente` };
       } else {
         return {
           success: true,
-          message: `Bienvenido de nuevo ${userData.NOMBRES}, recuerda tener a la mano el qr para ingresar.`,
+          message: `Bienvenido de nuevo ${userData.nombres}`,
+        };
+      }
+    } catch (error) {
+      return {
+        success: false,
+        message:
+          "Ocurrió un error al generar el ticket, intentelo más tarde.",
+      };
+    }
+  }
+  async function updateParticipantGuessStatus(dni) {
+    try {
+      const guessRef = collection(db, "invitados");
+      const q = query(
+        guessRef,
+        where("dni", "==", dni)
+      );
+      const querySnapshot = await getDocs(q);
+
+      if (querySnapshot.empty) {
+        return { success: false, message: "DNI incorrecto o no estas registrado como invitados." };
+      }
+
+      const docSnapshot = querySnapshot.docs[0];
+      const docRef = doc(db, "invitados", docSnapshot.id);
+      const userData = docSnapshot.data();
+
+      if (!userData.status) {
+        await updateDoc(docRef, { status: "no_registrado" });
+        userData.status = "no_registrado";
+      }
+
+      // Actualizar estado de Pinia
+      userQr.value = await QRCode.toDataURL(dni);
+      userDni.value = dni;
+      userHashCode.value = bcrypt.hashSync(dni, 10);
+      userFullName.value = userData.nombres;
+
+      if (userData.status === "no_registrado") {
+        return { success: true, message: `Hola, ${userData.nombres}. tu ticket se generó correctamente` };
+      } else {
+        return {
+          success: true,
+          message: `Bienvenido de nuevo ${userData.nombres}`,
         };
       }
     } catch (error) {
@@ -143,6 +200,7 @@ export const useUserStore = defineStore("user", () => {
     validateAdmin,
     updateParticipantStatusToAdmin,
     updateParticipantStatus,
+    updateParticipantGuessStatus,
     logout
   };
 }, {

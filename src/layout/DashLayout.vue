@@ -8,9 +8,9 @@ const router = useRouter();
 const userStore = useUserStore();
 
 const handleLogout = (redirect = "/home") => {
-    if (redirect === "/admin"){
-        speaker(`Adiós adminsito bello o bella`);
-    }else{
+    if (redirect === "/admin") {
+        speaker(`Adiós admin de mi corazón`);
+    } else {
         speaker(`Adiós ${userStore.userFullName}`);
     }
     userStore.logout();
@@ -34,13 +34,15 @@ const handleLogout = (redirect = "/home") => {
 
                 <!-- Desktop Menu -->
                 <div class="flex items-center xs:gap-2 md:gap-12 font-semibold">
-                    <a href="#ticket" v-if="userStore.userDni"
-                        class="text-red-300 cursor-pointer flex items-center content-center gap-1">
+                    <a href="#ticket" v-if="userStore.userHashCode"
+                        class="cursor-pointer flex items-center content-center gap-1"
+                        :class="[!userStore.username ? 'text-red-300' : 'text-blue-300']">
                         <Ticket class="w-5 h-5" />
                         Mi Ticket
                     </a>
                     <button type="button" @click="handleLogout(userStore.username ? '/admin' : '/home')"
-                        class="flex items-center content-center gap-1 hover:shadow-[0_2px_6px_#ff0000] hover:shadow-red-500/80 p-2 rounded-lg">
+                        class="flex items-center content-center gap-1 shadow-[0_2px_6px_#ff0000] shadow-red-500/80 p-2 rounded-lg hover:shadow-red-500 hover:shadow-md"
+                        :class="[!userStore.username ? 'shadow-[0_2px_6px_#ff0000] shadow-red-500/80  hover:shadow-red-500' : 'shadow-[0_2px_6px_#ff0000] shadow-blue-500/80  hover:shadow-blue-500']">
                         <LogOut class="w-5 h-5" />
                         Salir
                     </button>

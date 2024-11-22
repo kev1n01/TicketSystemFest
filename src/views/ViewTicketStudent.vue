@@ -1,7 +1,9 @@
 <template>
   <DashLayout>
 
-    <div class="bg-white relative p-6 sm:p-8 rounded-lg shadow-2xl w-full max-w-sm sm:max-w-lg mt-16 xs:mt-40 sm:mt-40 md:mt-40 xl:mt-32 2xl:mt-16 my-20" id="ticket">
+    <div
+      class="bg-white relative p-6 sm:p-8 rounded-lg shadow-2xl w-full max-w-sm sm:max-w-lg mt-16 xs:mt-40 sm:mt-40 md:mt-40 xl:mt-32 2xl:mt-16 my-20"
+      id="ticket">
       <!-- Fecha y Hora -->
       <div
         class="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-red-600 to-red-400 text-white py-3 px-5 rounded-md shadow  flex justify-between gap-8 w-3/4 md:w-3/5">
@@ -10,18 +12,16 @@
       </div>
 
       <!-- Título -->
-      <h2 class="mt-5 text-4xl sm:text-4xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-5xl font-bold text-center text-gray-800 mb-6 font-russo
-          bg-gradient-to-r from-red-600 via-black/80 to-red-600 bg-clip-text text-transparent">
-        System Fest 2024
+      <h2
+        class="mt-5 text-4xl sm:text-4xl md:text-3xl lg:text-4xl xl:text-4xl 2xl:text-6xl font-bold text-center text-gray-800 mb-6
+          bg-gradient-to-r from-red-500 via-red-400 to-red-600 bg-clip-text text-transparent font-dastress tracking-wider">
+        System Fest
       </h2>
 
       <!-- Información del Participante -->
       <div class="mb-6 text-center">
         <div class="mb-4">
           <p class="text-gray-900 font-semibold text-lg sm:text-xl md:text-lg">{{ userData.fullName }}</p>
-        </div>
-        <div class="mb-4">
-          <span class="text-gray-800 text-sm sm:text-base">DNI: {{ userData.dni }}</span>
         </div>
         <div class="mb-4">
           <p class="text-gray-800 text-sm sm:text-base">Código: {{ userData.code }}</p>
@@ -62,7 +62,7 @@ import DashLayout from "../layout/DashLayout.vue";
 
 const userStore = useUserStore();
 const router = useRouter();
-const userData = ref({ dni: "", code: "", fullName: "", qrCode: "" });
+const userData = ref({ code: "", fullName: "", qrCode: "" });
 
 onMounted(() => {
   if (!userStore.userHashCode || !userStore.userQr) {
@@ -71,11 +71,8 @@ onMounted(() => {
   }
 
   // Cargar datos desde localStorage
-  userData.value.dni = userStore.userDni;
   userData.value.code = userStore.userCode;
   userData.value.fullName = userStore.userFullName;
   userData.value.qrCode = userStore.userQr;
 });
-
-
 </script>

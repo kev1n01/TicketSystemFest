@@ -8,6 +8,17 @@
           Escáner QR
         </h2>
 
+        <div>
+          <p v-if="messageValidateError !== ''"
+            class="text-red-600 text-sm md:text-base mb-4 font-semibold text-center p-2 bg-red-300/40 border border-red-400 rounded-md">
+            {{ messageValidateError }}
+          </p>
+          <p v-if="messageValidateSuccess !== ''"
+            class="text-green-600 text-sm md:text-base mb-4 font-semibold text-center p-2 bg-green-300/40 border border-green-400 rounded-md">
+            {{ messageValidateSuccess }}
+          </p>
+        </div>
+
         <div class="scanner-container">
           <!-- Escáner -->
           <div id="reader" class="scanner mx-auto" style="width: 100%; aspect-ratio: 2 / 1;"></div>
@@ -17,39 +28,33 @@
 
         <!-- Skeleton Loader -->
         <div v-if="loading" class="animate-pulse">
-          <div class="h-8 bg-gray-300/20 rounded mb-4 border-[1px] border-dotted border-black/80 "></div>
-          <div class="h-6 bg-gray-300 rounded mb-4"></div>
-          <div class="flex justify-between gap-2">
-            <div class="h-4 bg-gray-300 rounded w-1/2 mb-2"></div>
+          <div class="flex justify-center items-center content-center gap-2 mt-3 flex-col space-y-2">
             <div class="h-4 bg-gray-300 rounded w-3/4"></div>
+            <div class="h-4 bg-gray-300 rounded w-1/2"></div>
+            <div class="h-6 bg-gray-300 rounded-full w-2/4"></div>
           </div>
         </div>
 
         <!-- Información del Participante -->
-        <div v-else v-if="participantData" class="mb-6 animate-fade-in mt-5">
-          <div>
-            <p v-if="messageValidateError !== ''"
-              class="text-red-600 text-sm md:text-base mb-4 font-semibold text-center p-2 bg-red-300/40 border border-red-400 rounded-md">
-              {{ messageValidateError }}
-            </p>
-            <p v-if="messageValidateSuccess !== ''"
-              class="text-green-600 text-sm md:text-base mb-4 font-semibold text-center p-2 bg-green-300/40 border border-green-400 rounded-md">
-              {{ messageValidateSuccess }}
-            </p>
-          </div>
-
+        <div v-else v-if="participantData" class="mb-0 animate-fade-in mt-5">
           <!-- Información del participante -->
           <div class="mb-4">
             <p class="text-gray-900 font-medium text-center text-lg">
-              {{ participantData.NOMBRES }} {{ participantData.PATERNO }} {{ participantData.MATERNO }}
+              {{ participantData.nombres }}
             </p>
           </div>
-          <div class="flex justify-between">
-            <div>
-              <p class="text-gray-900 text-base">DNI: {{ participantData.DNI }}</p>
+          <div class="flex justify-center flex-col gap-2 items-center content-center">
+            <div v-if="participantData.dni">
+              <p class="text-gray-900 text-base">DNI: {{ participantData.dni }}</p>
             </div>
-            <div>
-              <p class="text-gray-900 text-base">Código: {{ participantData.COD }}</p>
+            <div v-if="participantData.cod">
+              <p class="text-gray-900 text-base">Código: {{ participantData.cod }}</p>
+            </div>
+            <div
+              class="text-white font-semibold text-center py-2 px-4 bg-gradient-to-r rounded-full text-sm sm:text-base md:text-sm shadow-lg"
+              :class="typeParticipant === 'invitado'
+                  ? 'from-green-500 to-green-600' : 'from-blue-500 to-blue-600'">
+              Ticket {{ typeParticipant }}
             </div>
           </div>
         </div>
@@ -68,6 +73,7 @@ const userStore = useUserStore();
 const participantData = ref(null);
 const messageValidateError = ref(""); // Para manejar mensajes de error
 const messageValidateSuccess = ref(""); // Para manejar mensajes de éxito
+const typeParticipant = ref(""); // Para conocer el tipo de participante
 const loading = ref(false); // Estado para el skeleton loader
 const isScanning = ref(false); // Estado para controlar si ya se está procesando un código
 
@@ -81,23 +87,26 @@ const onDecode = async (decodedString) => {
   try {
     messageValidateError.value = "";
     messageValidateSuccess.value = "";
+    typeParticipant.value = "";
+    participantData.value = null;
     loading.value = true; // Mostrar el loader
-
     const result = await userStore.updateParticipantStatusToAdmin(decodedString);
 
     if (!result.success) {
       if (result.data) {
+        typeParticipant.value = result.type;
         participantData.value = result.data;
       }
       messageValidateError.value = result.message;
-      speaker(result.message);
+      // speaker(result.message);
       return;
     }
 
     if (result.success) {
       participantData.value = result.data;
       messageValidateSuccess.value = result.message;
-      speaker(result.message);
+      typeParticipant.value = result.type;
+      // speaker(result.message);
     }
   } catch (error) {
     messageValidateError.value = "Ocurrió un error durante el escaneo. Intenta nuevamente.";
@@ -116,7 +125,7 @@ const startScanner = () => {
       { facingMode: "environment" },
       {
         fps: 10, // Frames por segundo
-        qrbox: { width: 250, height: 400 }, // Área del escaneo
+        qrbox: { width: 250, height: 350 }, // Área del escaneo
       },
       (decodedText) => {
         onDecode(decodedText);
@@ -178,7 +187,7 @@ onUnmounted(() => {
 .scanner {
   position: absolute;
   width: 100%;
-  height: 150px !important;
+  height: 300px !important;
   background: rgba(0, 0, 0, 0.1);
   padding-top: 0px;
 }

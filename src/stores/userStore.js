@@ -77,8 +77,11 @@ export const useUserStore = defineStore("user", () => {
       }
 
       // Actualizar estado a 'registrado'
-      await updateDoc(docRef, { status: "registrado" });
+      const time = new Date();
+
+      await updateDoc(docRef, { status: "registrado", timestamp: time });
       userData.status = "registrado";
+      userData.timestamp = time
 
       return {
         success: true,

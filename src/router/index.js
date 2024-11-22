@@ -2,8 +2,10 @@ import { createRouter, createWebHistory } from 'vue-router';
 import { useUserStore } from '../stores/userStore';
 
 // Importación de vistas
-const ParticipantRegister = () => import('../views/ParticipantRegister.vue');
-const ParticipantDetails = () => import('../views/ParticipantDetails.vue');
+const GenerateTicketGuess = () => import('../views/GenerateTicketGuess.vue');
+const GenerateTicketStudent = () => import('../views/GenerateTicketStudent.vue');
+const ViewTicketStudent = () => import('../views/ViewTicketStudent.vue');
+const ViewTicketGuess = () => import('../views/ViewTicketGuess.vue');
 const AdminLogin = () => import('../views/AdminLogin.vue');
 const AdminScanner = () => import('../views/AdminScanner.vue');
 const NotFound = () => import('../views/NotFound.vue');
@@ -20,15 +22,27 @@ const routes = [
     redirect: '/home'
   },
   {
-    path: '/generate-ticket',
-    name: 'ParticipantRegister',
-    component: ParticipantRegister,
+    path: '/generate-ticket-guess',
+    name: 'GenerateTicketGuess',
+    component: GenerateTicketGuess,
     meta: { requiresNoAuth: true }
   },
   {
-    path: '/participant-details',
-    name: 'ParticipantDetails',
-    component: ParticipantDetails,
+    path: '/generate-ticket',
+    name: 'GenerateTicketStudent',
+    component: GenerateTicketStudent,
+    meta: { requiresNoAuth: true }
+  },
+  {
+    path: '/view-ticket',
+    name: 'ViewTicketStudent',
+    component: ViewTicketStudent,
+    meta: { requiresParticipant: true },
+  },
+  {
+    path: '/view-ticket-guess',
+    name: 'ViewTicketGuess',
+    component: ViewTicketGuess,
     meta: { requiresParticipant: true },
   },
   {
@@ -52,7 +66,7 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory('#'),
+  history: createWebHistory(),
   routes
 });
 
@@ -79,7 +93,7 @@ router.beforeEach((to, from, next) => {
       return;
     }
     if (userStore.userQr !== null && to.path === '/generate-ticket') {
-      next('/participant-details');
+      next('/view-ticket');
       return;
     }
   }

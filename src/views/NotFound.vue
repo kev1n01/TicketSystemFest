@@ -1,29 +1,22 @@
 <template>
-    <div class="container">
-        <div class="not-found-container text-center">
-            <h1 class="mb-4">404</h1>
-            <h2 class="mb-3">Página No Encontrada</h2>
-            <p class="mb-4">
+    <div class="flex justify-center items-center bg-black/90 min-h-screen text-white font-epilogue">
+        <div class="text-center">
+            <h1 class="mb-3 font-dastress">404 🥺</h1>
+            <h2 class="mb-3 font-medium">Página No Encontrada</h2>
+            <p class="mb-7 text-white/80 xs:text-wrap w-80">
                 Lo sentimos, la página que estás buscando no existe o ha sido movida.
             </p>
-            <router-link to="/" class="btn btn-primary">
-                Volver al Inicio
+            <router-link to="/" class="bg-red-600 hover:bg-red-700 text-white py-3 px-6 rounded font-semibold text-lg">
+                Volver 
             </router-link>
         </div>
     </div>
 </template>
 
 <script setup>
-// No se necesita lógica adicional para esta vista
 </script>
 
 <style scoped>
-.not-found-container {
-    padding: 4rem 1rem;
-    max-width: 600px;
-    margin: 0 auto;
-}
-
 h1 {
     font-size: 6rem;
     color: var(--primary-color);
@@ -36,7 +29,6 @@ h2 {
 }
 
 p {
-    color: #666;
     font-size: 1.1rem;
 }
 </style>

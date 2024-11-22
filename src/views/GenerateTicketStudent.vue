@@ -1,27 +1,27 @@
 <template>
   <div
     class="flex flex-col items-center justify-center min-h-screen bg-gradient-to-tl from-black/80 via-black/90 to-red-900 text-white px-4 sm:px-6 lg:px-8 font-epilogue">
-    <div class="grid grid-cols-3 gap-4 mb-4">
+    <div class="grid grid-cols-3 gap-4 mb-4 xs:w-[380px] md:w-[450px]">
       <div class="bg-white p-3 rounded-lg shadow-xl min-h-32">
-        <img src="../assets/imgs/ltd.png" alt="" class="w-28">
+        <img src="/imgs/ltd-compress.webp" alt="" class="w-28">
       </div>
       <div class="bg-white p-3 rounded-lg shadow-xl min-h-32">
-        <img src="../assets/imgs/paisi.png" alt="" class="w-28">
+        <img src="/imgs/paisi-compress.webp" alt="" class="w-28">
       </div>
       <div class="bg-white p-3 rounded-lg shadow-xl min-h-32">
-        <img src="/public/icon.png" alt="" class="w-28">
+        <img src="/icon.png" alt="" class="w-28">
       </div>
     </div>
 
     <!-- <div class="mb-4">
-      <div class="bg-white px-5 py-2 rounded-lg shadow-xl max-w-sm min-w-sm sm:max-w-md min-h-24 h-28">
-        <img src="../assets/imgs/paisi_logo.png" alt="" class="w-[408px]">
+      <div class="bg-white py-2 rounded-lg shadow-xl min-w-sm h-auto w-[450px] flex justify-center">
+        <img src="/imgs/ltd_complete.jpeg" alt="" class="w-[300px] object-cover">
       </div>
     </div> -->
     <form @submit.prevent="handleSubmit"
       class="bg-white p-6 sm:p-8 rounded-lg shadow-xl w-full max-w-sm sm:max-w-md shadow-red-500/20">
-      <h2 class="text-xl sm:text-2xl font-bold text-center text-gray-800 mb-6">
-        Generar ticket
+      <h2 class="text-lg sm:text-xl font-bold text-center text-gray-800 mb-6">
+        Generar ticket como estudiante
       </h2>
 
       <div>
@@ -36,19 +36,19 @@
       </div>
 
       <!-- DNI -->
-      <div class="mb-4">
+      <!-- <div class="mb-4">
         <label for="dni" class="block text-sm sm:text-base font-medium text-gray-700 mb-1">
-          DNI
+          Dni
         </label>
         <input v-model="formData.dni" type="text" id="dni" autofocus placeholder="Ingresa tu DNI"
           class="w-full p-3 sm:p-4 border border-gray-300 rounded-lg shadow-sm focus:ring-red-500 focus:border-red-500 text-gray-900"
           required max="8" min="8" maxlength="8" />
-      </div>
+      </div> -->
 
       <!-- Código -->
       <div class="mb-4">
         <label for="cod" class="block text-sm sm:text-base font-medium text-gray-700 mb-1">
-          Código (COD)
+          Código universitario
         </label>
         <input v-model="formData.cod" type="text" id="cod" placeholder="Ingresa tu Código"
           class="w-full p-3 sm:p-4 border border-gray-300 rounded-lg shadow-sm focus:ring-red-500 focus:border-red-500 text-gray-900"
@@ -80,7 +80,6 @@ const messageValidateError = ref("");
 const messageValidateSuccess = ref("");
 
 const formData = ref({
-  dni: "",
   cod: "",
 });
 
@@ -92,13 +91,13 @@ const handleSubmit = async () => {
     messageValidateError.value = "";
     messageValidateSuccess.value = "";
 
-    if (!formData.value.dni || !formData.value.cod) {
+    if (!formData.value.cod) {
       messageValidateError.value = "Todos los campos son obligatorios.";
       return;
     }
 
     // actualizando estado del participante
-    const result = await userStore.updateParticipantStatus(formData.value.dni, formData.value.cod);
+    const result = await userStore.updateParticipantStatus(formData.value.cod);
 
     if (!result.success) {
       messageValidateError.value = result.message;
@@ -107,10 +106,10 @@ const handleSubmit = async () => {
 
     if (result.success) {
       messageValidateSuccess.value = result.message;
-      speaker(result.message);
+      // speaker(result.message);
 
       setTimeout(() => {
-        router.push("/participant-details");
+        router.push("/view-ticket");
       }, 2000);
     }
   } catch (error) {

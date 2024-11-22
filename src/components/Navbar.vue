@@ -82,7 +82,7 @@ onUnmounted(() => {
 
             <!-- Button (Right) -->
             <div class="hidden lg:block">
-                <ButtonPrimarySecondEffect class="w-[120px]"
+                <ButtonPrimarySecondEffect class=""
                     :label="userStore.userHashCode != null ? 'Ver mi ticket' : 'Generar'"
                     :link="userStore.userHashCode == null ? '/generate-ticket' : '/view-ticket'" />
             </div>
@@ -116,7 +116,7 @@ onUnmounted(() => {
                     Auspiciadores
                 </a>
                 <div class="flex justify-center">
-                    <ButtonPrimarySecondEffect class="w-[120px]"
+                    <ButtonPrimarySecondEffect class=""
                         :label="userStore.userHashCode ? 'Ver mi ticket' : 'Generar'"
                         :link="userStore.userHashCode == null ? '/generate-ticket' : '/view-ticket'" />
                 </div>

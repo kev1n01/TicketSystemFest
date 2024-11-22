@@ -58,7 +58,7 @@ const userStore = useUserStore();
                         <ButtonPrimarySecondEffect
                             class="w-full max-w-[300px] sm:max-w-[400px] md:max-w-[500px] lg:max-w-[900px]"
                             :label="userStore.userHashCode != null ? 'Ver mi ticket' : 'Generar'"
-                            :link="userStore.userHashCode == null ? '/generate-ticket' : '/view-ticket'" />
+                            :link="userStore.userHashCode == null ? '/generate-ticket-guess' : '/view-ticket'" />
                     </div>s
                 </div>
             </div>

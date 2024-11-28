@@ -8,6 +8,7 @@ import {
   getDocs,
   updateDoc,
   doc,
+  serverTimestamp 
 } from "firebase/firestore";
 import QRCode from "qrcode";
 import bcrypt from "bcryptjs";
@@ -34,7 +35,7 @@ export const useUserStore = defineStore("user", () => {
 
       userHashCode.value = bcrypt.hashSync(usernameInput, 10);
       username.value = usernameInput;
-      return { success: true, message: `Bienvenido admin, ${username.value} 😎` };
+      return { success: true, message: `Bienvenido admin, ${username.value}` };
     } catch (error) {
       return { success: false, message: error.message };
     }
@@ -76,12 +77,13 @@ export const useUserStore = defineStore("user", () => {
         };
       }
 
-      // Actualizar estado a 'registrado'
-      const time = new Date();
-
-      await updateDoc(docRef, { status: "registrado", timestamp: time });
+      await updateDoc(docRef, {
+        status: "registrado",
+        timestamp: serverTimestamp()
+      });
+      
       userData.status = "registrado";
-      userData.timestamp = time
+      userData.timestamp = new Date()
 
       return {
         success: true,

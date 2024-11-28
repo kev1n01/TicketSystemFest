@@ -1,12 +1,22 @@
 <script setup>
-import { useUserStore } from '../stores/userStore';
-import { Terminal, Ticket, LogOut } from 'lucide-vue-next'
-import { useRouter } from "vue-router";
-import speaker from '../speaker';
+import { ref } from "vue";
+import { useUserStore } from "../stores/userStore";
+import { Terminal, Ticket, LogOut, HistoryIcon, Menu, X, Scan, CircleGauge } from "lucide-vue-next";
+import { useRouter, useRoute } from "vue-router";
+import speaker from "../speaker";
 
 const router = useRouter();
+const route = useRoute();
 const userStore = useUserStore();
 
+// Estado para controlar el menú móvil
+const menuAbierto = ref(false);
+
+const toggleMenu = () => {
+    menuAbierto.value = !menuAbierto.value;
+};
+
+// Función para manejar el logout
 const handleLogout = (redirect = "/home") => {
     if (redirect === "/admin") {
         speaker(`Adiós admin de mi corazón`);
@@ -16,7 +26,11 @@ const handleLogout = (redirect = "/home") => {
     userStore.logout();
     router.push(redirect);
 };
+
+// Función para verificar si un enlace está activo
+const esRutaActiva = (ruta) => route.path === ruta;
 </script>
+
 <template>
     <div
         class="flex items-center justify-center min-h-screen h-max bg-gradient-to-br from-red-900 to-black text-white px-4 sm:px-6 lg:px-8 font-epilogue mb-0">
@@ -32,21 +46,79 @@ const handleLogout = (redirect = "/home") => {
                     </div>
                 </a>
 
-                <!-- Desktop Menu -->
-                <div class="flex items-center xs:gap-2 md:gap-12 font-semibold">
-                    <a href="#ticket" v-if="userStore.userHashCode"
+                <!-- Botón de menú para pantallas pequeñas -->
+                <button class="lg:hidden block" @click="toggleMenu" aria-label="Toggle menu">
+                    <Menu v-if="!menuAbierto" class="w-6 h-6" />
+                    <X v-else class="w-6 h-6" />
+                </button>
+
+                <!-- Menú Desktop -->
+                <div class="hidden lg:flex items-center xs:gap-2 md:gap-12 font-semibold">
+                    <a href="#ticket" v-if="userStore.userCode || userStore.userDni"
                         class="cursor-pointer flex items-center content-center gap-1"
-                        :class="[!userStore.username ? 'text-red-300' : 'text-blue-300']">
+                        :class="[esRutaActiva('/view-ticket') ? 'text-red-300' : 'text-white']">
                         <Ticket class="w-5 h-5" />
                         Mi Ticket
                     </a>
+                    <a href="/lottery" v-if="userStore.username"
+                        class="cursor-pointer flex items-center content-center gap-1"
+                        :class="{ 'text-blue-300': esRutaActiva('/lottery'), 'text-red-300': !userStore.username }">
+                        <CircleGauge class="w-5 h-5" />
+                        Sorteo
+                    </a>
+                    <a href="/historial-register" v-if="userStore.username"
+                        class="cursor-pointer flex items-center content-center gap-1"
+                        :class="{ 'text-blue-300': esRutaActiva('/historial-register'), 'text-red-300': !userStore.username }">
+                        <HistoryIcon class="w-5 h-5" />
+                        Historial
+                    </a>
+                    <a href="/scanner" v-if="userStore.username"
+                        class="cursor-pointer flex items-center content-center gap-1"
+                        :class="[esRutaActiva('/scanner') ? 'text-blue-300' : 'text-white']">
+                        <Scan class="w-5 h-5" />
+                        Escanear
+                    </a>
                     <button type="button" @click="handleLogout(userStore.username ? '/admin' : '/home')"
-                        class="flex items-center content-center gap-1 shadow-[0_2px_6px_#ff0000] shadow-red-500/80 p-2 rounded-lg hover:shadow-red-500 hover:shadow-md"
-                        :class="[!userStore.username ? 'shadow-[0_2px_6px_#ff0000] shadow-red-500/80  hover:shadow-red-500' : 'shadow-[0_2px_6px_#ff0000] shadow-blue-500/80  hover:shadow-blue-500']">
+                        class="flex items-center content-center gap-1 shadow-[0_2px_6px_#ff0000] p-2 rounded-lg hover:shadow-md"
+                        :class="{ 'shadow-blue-500/80 hover:shadow-blue-500': userStore.username, 'shadow-red-500/80 hover:shadow-red-500': !userStore.username }">
                         <LogOut class="w-5 h-5" />
                         Salir
                     </button>
                 </div>
+            </div>
+
+            <!-- Menú móvil -->
+            <div v-if="menuAbierto" class="lg:hidden flex flex-col items-center mt-4 space-y-4 font-semibold">
+                <a href="#ticket" v-if="userStore.userCode || userStore.userDni"
+                    class="cursor-pointer flex items-center content-center gap-1"
+                    :class="[esRutaActiva('/view-ticket') ? 'text-red-300' : 'text-white']">
+                    <Ticket class="w-5 h-5" />
+                    Mi Ticket
+                </a>
+                <a href="/lottery" v-if="userStore.username"
+                    class="cursor-pointer flex items-center content-center gap-1"
+                    :class="{ 'text-blue-300': esRutaActiva('/lottery'), 'text-red-300': !userStore.username }">
+                    <CircleGauge class="w-5 h-5" />
+                    Sorteo
+                </a>
+                <a href="/historial-register" v-if="userStore.username"
+                    class="cursor-pointer flex items-center content-center gap-1"
+                    :class="[esRutaActiva('/historial-register') ? 'text-blue-300' : 'text-white']">
+                    <HistoryIcon class="w-5 h-5" />
+                    Historial
+                </a>
+                <a href="/scanner" v-if="userStore.username"
+                    class="cursor-pointer flex items-center content-center gap-1"
+                    :class="[esRutaActiva('/scanner') ? 'text-blue-300' : 'text-white']">
+                    <Scan class="w-5 h-5" />
+                    Escanear
+                </a>
+                <button type="button" @click="handleLogout(userStore.username ? '/admin' : '/home')"
+                    class="flex items-center content-center gap-1 shadow-[0_2px_6px_#ff0000] p-2 rounded-lg hover:shadow-md w-full text-center justify-center"
+                    :class="{ 'shadow-blue-500/80 hover:shadow-blue-500': userStore.username, 'shadow-red-500/80 hover:shadow-red-500': !userStore.username }">
+                    <LogOut class="w-5 h-5" />
+                    Salir
+                </button>
             </div>
         </nav>
 

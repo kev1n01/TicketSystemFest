@@ -44,7 +44,7 @@ const userStore = useUserStore();
 
         <!-- Generar tickets-->
         <div
-            class="grid md:grid-cols-3 gap-8 pb-10 bg-red-900/25 backdrop-blur-sm p-10 xs:mx-2 rounded-3xl border border-white/30 hover:shadow-red-500/20 hover:shadow-xl mt-[-30px] 2xl:mt-[-100px]">
+            class="grid md:grid-cols-3 gap-8 pb-10 bg-red-900/25 backdrop-blur-sm p-10 xs:mx-2 rounded-3xl border border-white/30 hover:shadow-red-500/20 hover:shadow-xl mt-[-30px] 2xl:mt-[-100px]" id="generate">
             <div class="items-center content-center">
                 <h2 class="text-2xl font-bold mb-2 xs:text-center md:text-left">Genera tu ticket ahora</h2>
                 <p>Para ingresar al evento, primero debes generar tu ticket digital como invitado o estudiante.

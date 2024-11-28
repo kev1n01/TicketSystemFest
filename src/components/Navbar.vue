@@ -83,8 +83,8 @@ onUnmounted(() => {
             <!-- Button (Right) -->
             <div class="hidden lg:block">
                 <ButtonPrimarySecondEffect class=""
-                    :label="userStore.userHashCode != null ? 'Ver mi ticket' : 'Generar'"
-                    :link="userStore.userHashCode == null ? '/generate-ticket' : '/view-ticket'" />
+                    label="Generar"
+                    link="#generate" />
             </div>
 
             <!-- Hamburger Menu (Mobile) -->
@@ -117,8 +117,8 @@ onUnmounted(() => {
                 </a>
                 <div class="flex justify-center">
                     <ButtonPrimarySecondEffect class=""
-                        :label="userStore.userHashCode ? 'Ver mi ticket' : 'Generar'"
-                        :link="userStore.userHashCode == null ? '/generate-ticket' : '/view-ticket'" />
+                    label="Generar"
+                    link="#generate" />
                 </div>
             </div>
         </div>

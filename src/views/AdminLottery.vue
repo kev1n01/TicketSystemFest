@@ -6,7 +6,7 @@
                     {{ isSpinning ? 'Sorteando' : 'Iniciar Sorteo' }}
                 </div>
             </div>
-<input type="number" v-model="numberWinner" />
+<input type="number" v-model="numberWinner" clases="text-gray-800"/>
 
             <div v-if="winners.length > 0" class="winners-section">
                 <h2 class="text-center text-2xl font-semibold">Ganadores</h2>

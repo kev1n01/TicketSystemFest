@@ -3,10 +3,10 @@
         <div class="raffle-container">
             <div :class="['wheel', { 'spinning': isSpinning }]" @click="startRaffle">
                 <div class="wheel-inner">
-                    {{ isSpinning ? 'Sorteando' : 'Iniciar Sorteo' }}
+                    
                 </div>
             </div>
-<input type="number" v-model="numberWinner" clases="text-gray-800"/>
+<p> {{ isSpinning ? 'Sorteando' : 'Iniciar Sorteo' }} </p>
 
             <div v-if="winners.length > 0" class="winners-section">
                 <h2 class="text-center text-2xl font-semibold">Ganadores</h2>
@@ -73,7 +73,6 @@ const fetchParticipants = async () => {
 }
 
 const startRaffle = async () => {
-if (numberWinner.value == null) return
     if (isSpinning.value) return
 
     isSpinning.value = true
@@ -83,7 +82,7 @@ if (numberWinner.value == null) return
 
     // Selección aleatoria de ganadores
     const selectedWinners = []
-    while (selectedWinners.length < numberWinner.value && participants.length > 0) {
+    while (selectedWinners.length < 1 && participants.length > 0) {
         const winnerIndex = Math.floor(Math.random() * participants.length)
         const winner = participants.splice(winnerIndex, 1)[0]
         selectedWinners.push(winner)
@@ -138,7 +137,7 @@ onMounted(() => {
 
 .wheel-inner {
     color: white;
-    font-size: 24px;
+    font-size: 16px;
     text-align: center;
 }
 

@@ -10,6 +10,8 @@ const AdminLogin = () => import('../views/AdminLogin.vue');
 const AdminScanner = () => import('../views/AdminScanner.vue');
 const AdminTable = () => import('../views/AdminTable.vue');
 const AdminLottery = () => import('../views/AdminLottery.vue');
+const ViewWinnerLottery = () => import('../views/ViewWinnerLottery.vue');
+const AdminUpload = () => import('../views/AdminUpload.vue');
 const NotFound = () => import('../views/NotFound.vue');
 
 const routes = [
@@ -67,8 +69,20 @@ const routes = [
   },
   {
     path: '/lottery',
-    name: 'AdminSorteo',
+    name: 'AdminLottery',
     component: AdminLottery,
+    meta: { requiresAdmin: true },
+  },
+  {
+    path: '/view-winner',
+    name: 'ViewWinnerLottery',
+    component: ViewWinnerLottery,
+    meta: { requiresAdmin: true },
+  },
+  {
+    path: '/upload-data',
+    name: 'AdminUpload',
+    component: AdminUpload,
     meta: { requiresAdmin: true },
   },
   {

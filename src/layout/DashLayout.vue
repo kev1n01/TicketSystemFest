@@ -1,7 +1,7 @@
 <script setup>
 import { ref } from "vue";
 import { useUserStore } from "../stores/userStore";
-import { Terminal, Ticket, LogOut, HistoryIcon, Menu, X, Scan, CircleGauge } from "lucide-vue-next";
+import { Terminal, Ticket, LogOut, HistoryIcon, Menu, X, Scan, CircleGauge, Upload } from "lucide-vue-next";
 import { useRouter, useRoute } from "vue-router";
 import speaker from "../speaker";
 
@@ -54,7 +54,7 @@ const esRutaActiva = (ruta) => route.path === ruta;
 
                 <!-- Menú Desktop -->
                 <div class="hidden lg:flex items-center xs:gap-2 md:gap-12 font-semibold">
-                    <a href="#ticket" v-if="userStore.userCode || userStore.userDni"
+                    <a href="/view-ticket" v-if="userStore.userCode || userStore.userDni"
                         class="cursor-pointer flex items-center content-center gap-1"
                         :class="[esRutaActiva('/view-ticket') ? 'text-red-300' : 'text-white']">
                         <Ticket class="w-5 h-5" />
@@ -62,13 +62,19 @@ const esRutaActiva = (ruta) => route.path === ruta;
                     </a>
                     <a href="/lottery" v-if="userStore.username"
                         class="cursor-pointer flex items-center content-center gap-1"
-                        :class="{ 'text-blue-300': esRutaActiva('/lottery'), 'text-red-300': !userStore.username }">
+                        :class="[esRutaActiva('/lottery') ? 'text-blue-300' : 'text-white']">
                         <CircleGauge class="w-5 h-5" />
                         Sorteo
                     </a>
+                    <a href="/view-winner" v-if="userStore.userCode || userStore.userDni"
+                        class="cursor-pointer flex items-center content-center gap-1"
+                        :class="[esRutaActiva('/view-winner') ? 'text-red-300' : 'text-white']">
+                        <CircleGauge class="w-5 h-5" />
+                        Ver sorteo
+                    </a>
                     <a href="/historial-register" v-if="userStore.username"
                         class="cursor-pointer flex items-center content-center gap-1"
-                        :class="{ 'text-blue-300': esRutaActiva('/historial-register'), 'text-red-300': !userStore.username }">
+                        :class="[esRutaActiva('/historial-register') ? 'text-blue-300' : 'text-white']">
                         <HistoryIcon class="w-5 h-5" />
                         Historial
                     </a>
@@ -77,6 +83,12 @@ const esRutaActiva = (ruta) => route.path === ruta;
                         :class="[esRutaActiva('/scanner') ? 'text-blue-300' : 'text-white']">
                         <Scan class="w-5 h-5" />
                         Escanear
+                    </a>
+                    <a href="/upload-data" v-if="userStore.username"
+                        class="cursor-pointer flex items-center content-center gap-1"
+                        :class="[esRutaActiva('/upload-data') ? 'text-blue-300' : 'text-white']">
+                        <Upload class="w-5 h-5" />
+                        Subir
                     </a>
                     <button type="button" @click="handleLogout(userStore.username ? '/admin' : '/home')"
                         class="flex items-center content-center gap-1 shadow-[0_2px_6px_#ff0000] p-2 rounded-lg hover:shadow-md"
@@ -89,15 +101,21 @@ const esRutaActiva = (ruta) => route.path === ruta;
 
             <!-- Menú móvil -->
             <div v-if="menuAbierto" class="lg:hidden flex flex-col items-center mt-4 space-y-4 font-semibold">
-                <a href="#ticket" v-if="userStore.userCode || userStore.userDni"
+                <a href="/view-ticket" v-if="userStore.userCode || userStore.userDni"
                     class="cursor-pointer flex items-center content-center gap-1"
                     :class="[esRutaActiva('/view-ticket') ? 'text-red-300' : 'text-white']">
                     <Ticket class="w-5 h-5" />
                     Mi Ticket
                 </a>
+                <a href="/view-winner" v-if="userStore.userCode || userStore.userDni"
+                    class="cursor-pointer flex items-center content-center gap-1"
+                    :class="[esRutaActiva('/view-winner') ? 'text-red-300' : 'text-white']">
+                    <CircleGauge class="w-5 h-5" />
+                    Ver sorteo
+                </a>
                 <a href="/lottery" v-if="userStore.username"
                     class="cursor-pointer flex items-center content-center gap-1"
-                    :class="{ 'text-blue-300': esRutaActiva('/lottery'), 'text-red-300': !userStore.username }">
+                    :class="[esRutaActiva('/lottery') ? 'text-blue-300' : 'text-white']">
                     <CircleGauge class="w-5 h-5" />
                     Sorteo
                 </a>
@@ -112,6 +130,12 @@ const esRutaActiva = (ruta) => route.path === ruta;
                     :class="[esRutaActiva('/scanner') ? 'text-blue-300' : 'text-white']">
                     <Scan class="w-5 h-5" />
                     Escanear
+                </a>
+                <a href="/upload-data" v-if="userStore.username"
+                    class="cursor-pointer flex items-center content-center gap-1"
+                    :class="[esRutaActiva('/upload-data') ? 'text-blue-300' : 'text-white']">
+                    <Upload class="w-5 h-5" />
+                    Subir
                 </a>
                 <button type="button" @click="handleLogout(userStore.username ? '/admin' : '/home')"
                     class="flex items-center content-center gap-1 shadow-[0_2px_6px_#ff0000] p-2 rounded-lg hover:shadow-md w-full text-center justify-center"

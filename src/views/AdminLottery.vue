@@ -30,7 +30,7 @@ import DashLayout from "../layout/DashLayout.vue";
 const isSpinning = ref(false)
 const winners = ref([])
 const loading = ref(false)
-const numberWinner = red(1)
+const numberWinner = ref(1)
 
 const fetchWinners = async () => {
     const winnersRef = collection(db, 'winners')

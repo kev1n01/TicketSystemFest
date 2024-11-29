@@ -29,7 +29,7 @@ const formatearFecha = (timestamp) => {
 // Función para obtener estudiantes con status "registrado"
 const obtenerEstudiantesEgresados = async () => {
     try {
-        const q = query(estudiantesRef, where("status", "==", "registrado"));
+        const q = query(estudiantesRef);
         const querySnapshot = await getDocs(q);
 
         const estudiantes = querySnapshot.docs.map((doc) => ({
@@ -48,7 +48,7 @@ const obtenerEstudiantesEgresados = async () => {
 // Función para obtener invitados con status "registrado"
 const obtenerInvitadosEgresados = async () => {
     try {
-        const q = query(invitadosRef, where("status", "==", "registrado"));
+        const q = query(invitadosRef);
         const querySnapshot = await getDocs(q);
 
         const invitados = querySnapshot.docs.map((doc) => ({
@@ -103,52 +103,64 @@ onMounted(async () => {
                 Registrados
             </h1>
 
-            <!-- Campo de búsqueda -->
-            <div class="mb-4 flex justify-start">
-                <input v-model="filtroCodDni" @input="combinarYFiltrarParticipantes" type="text"
-                    placeholder="Buscar por Código o DNI"
-                    class="px-4 py-2 border border-gray-500 rounded-md xs:w-4/5 md:w-1/2" :disabled="cargando" />
-            </div>
+
 
             <!-- Skeleton mientras carga -->
             <div v-if="cargando" class="space-y-2">
-                <div v-for="n in 4" :key="n" class="animate-pulse bg-gray-200 h-10 w-full rounded-md"></div>
+                <div class="animate-pulse bg-gray-200 h-10 w-2/4 rounded-md"></div>
+                <div class="animate-pulse bg-gray-200 h-40 w-full rounded-md"></div>
             </div>
 
             <!-- Tabla responsiva -->
-            <div v-else class="overflow-x-auto overflow-y-auto max-h-96">
-                <table class="min-w-full border-collapse border border-gray-300 rounded-xl">
-                    <thead>
-                        <tr class="bg-gray-200 rounded-xl">
-                            <th class="border border-gray-300 px-4 py-2">Código / DNI</th>
-                            <th class="border border-gray-300 px-4 py-2">Nombre</th>
-                            <th class="border border-gray-300 px-4 py-2">Estado</th>
-                            <th class="border border-gray-300 px-4 py-2">Fecha y Hora</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="participante in participantesFiltrados" :key="participante.id"
-                            class="hover:bg-gray-100 font-medium">
-                            <td class="border border-gray-300 px-4 py-2">
-                                {{ participante.tipo === 'estudiante' ? participante.cod : participante.dni }}
-                            </td>
-                            <td class="border border-gray-300 px-4 py-2">{{ participante.nombres }} /
-                                <span class="font-bold">
-                                    {{ participante.tipo === 'estudiante' ? 'Estudiante' : 'Invitado' }}
-                                </span>
-                            </td>
-                            <td class="border border-gray-300 px-4 py-2">{{ participante.status }}</td>
-                            <td class="border border-gray-300 px-4 py-2">
-                                {{ formatearFecha(participante.timestamp) }}
-                            </td>
-                        </tr>
-                        <tr v-if="participantesFiltrados.length === 0">
-                            <td colspan="4" class="text-center text-gray-500 border border-gray-300 px-4 py-2">
-                                No se encontraron resultados
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+            <div v-else>
+                <!-- Campo de búsqueda -->
+                <div class="mb-4 flex justify-start">
+                    <input v-model="filtroCodDni" @input="combinarYFiltrarParticipantes" type="text"
+                        placeholder="Buscar por Código o DNI"
+                        class="px-4 py-2 border border-gray-500 rounded-md xs:w-4/5 md:w-1/2" :disabled="cargando" />
+                </div>
+                <div class="overflow-x-auto overflow-y-auto max-h-96 min-h-40">
+                    <table class="min-w-full border-collapse border border-gray-300 rounded-xl">
+                        <thead>
+                            <tr class="bg-gray-200 rounded-xl">
+                                <th class="border border-gray-300 px-4 py-2">Código / DNI</th>
+                                <th class="border border-gray-300 px-4 py-2">Nombre</th>
+                                <th class="border border-gray-300 px-4 py-2">Estado</th>
+                                <th class="border border-gray-300 px-4 py-2">Fecha y Hora</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="participante in participantesFiltrados" :key="participante.id"
+                                class="hover:bg-gray-100 font-medium">
+                                <td class="border border-gray-300 px-4 py-2">
+                                    {{ participante.tipo === 'estudiante' ? participante.cod : participante.dni }}
+                                </td>
+                                <td class="border border-gray-300 px-4 py-2">{{ participante.nombres }} /
+                                    <span class="font-bold">
+                                        {{ participante.tipo === 'estudiante' ? 'Estudiante' : 'Invitado' }}
+                                    </span>
+                                </td>
+                                <td class="border border-gray-300 px-4 py-2 text-sm">
+                                    <span class="bg-green-500 text-white rounded-md px-2 py-1"
+                                        v-if="participante.status === 'registrado'">
+                                        {{ participante.status }}
+                                    </span>
+                                    <span class="bg-red-500/80 text-white rounded-md px-2 py-1" v-else>
+                                        {{ participante.status ? participante.status : 'no_registrado' }}
+                                    </span>
+                                </td>
+                                <td class="border border-gray-300 px-4 py-2">
+                                    {{ formatearFecha(participante.timestamp) }}
+                                </td>
+                            </tr>
+                            <tr v-if="participantesFiltrados.length === 0">
+                                <td colspan="4" class="text-center text-gray-500 border border-gray-300 px-4 py-2 h-40">
+                                    No se encontraron resultados
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </DashLayout>

@@ -84,12 +84,12 @@ const esRutaActiva = (ruta) => route.path === ruta;
                         <Scan class="w-5 h-5" />
                         Escanear
                     </a>
-                    <a href="/upload-data" v-if="userStore.username"
+                    <!-- <a href="/upload-data" v-if="userStore.username"
                         class="cursor-pointer flex items-center content-center gap-1"
                         :class="[esRutaActiva('/upload-data') ? 'text-blue-300' : 'text-white']">
                         <Upload class="w-5 h-5" />
                         Subir
-                    </a>
+                    </a> -->
                     <button type="button" @click="handleLogout(userStore.username ? '/admin' : '/home')"
                         class="flex items-center content-center gap-1 shadow-[0_2px_6px_#ff0000] p-2 rounded-lg hover:shadow-md"
                         :class="{ 'shadow-blue-500/80 hover:shadow-blue-500': userStore.username, 'shadow-red-500/80 hover:shadow-red-500': !userStore.username }">
@@ -131,12 +131,12 @@ const esRutaActiva = (ruta) => route.path === ruta;
                     <Scan class="w-5 h-5" />
                     Escanear
                 </a>
-                <a href="/upload-data" v-if="userStore.username"
+                <!-- <a href="/upload-data" v-if="userStore.username"
                     class="cursor-pointer flex items-center content-center gap-1"
                     :class="[esRutaActiva('/upload-data') ? 'text-blue-300' : 'text-white']">
                     <Upload class="w-5 h-5" />
                     Subir
-                </a>
+                </a> -->
                 <button type="button" @click="handleLogout(userStore.username ? '/admin' : '/home')"
                     class="flex items-center content-center gap-1 shadow-[0_2px_6px_#ff0000] p-2 rounded-lg hover:shadow-md w-full text-center justify-center"
                     :class="{ 'shadow-blue-500/80 hover:shadow-blue-500': userStore.username, 'shadow-red-500/80 hover:shadow-red-500': !userStore.username }">

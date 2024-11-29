@@ -90,8 +90,8 @@ const startRaffle = async () => {
     // Guardar ganadores
     const winnersToSave = selectedWinners.map(async (winner) => {
         // Marcar como ganador en su colección original
-        const docRef = doc(db, winner.type + 's', winner.id)
-        await updateDoc(docRef, { isWinner: true })
+        // const docRef = doc(db, winner.type + 's', winner.id)
+        // await updateDoc(docRef, { isWinner: true })
 
         // Guardar en colección de winners
         return addDoc(collection(db, 'winners'), {

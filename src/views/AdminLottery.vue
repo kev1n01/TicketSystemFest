@@ -6,6 +6,7 @@
                     {{ isSpinning ? 'Sorteando' : 'Iniciar Sorteo' }}
                 </div>
             </div>
+<input type="number" v-model="numberWinner" />
 
             <div v-if="winners.length > 0" class="winners-section">
                 <h2 class="text-center text-2xl font-semibold">Ganadores</h2>
@@ -29,6 +30,7 @@ import DashLayout from "../layout/DashLayout.vue";
 const isSpinning = ref(false)
 const winners = ref([])
 const loading = ref(false)
+const numberWinner = red(1)
 
 const fetchWinners = async () => {
     const winnersRef = collection(db, 'winners')
@@ -71,17 +73,17 @@ const fetchParticipants = async () => {
 }
 
 const startRaffle = async () => {
+if (numberWinner.value == null) return
     if (isSpinning.value) return
 
     isSpinning.value = true
     const participants = await fetchParticipants()
 
     // Número de ganadores (ajustable)
-    const numWinners = 3
 
     // Selección aleatoria de ganadores
     const selectedWinners = []
-    while (selectedWinners.length < numWinners && participants.length > 0) {
+    while (selectedWinners.length < numberWinner.value && participants.length > 0) {
         const winnerIndex = Math.floor(Math.random() * participants.length)
         const winner = participants.splice(winnerIndex, 1)[0]
         selectedWinners.push(winner)
@@ -119,8 +121,8 @@ onMounted(() => {
 }
 
 .wheel {
-    width: 300px;
-    height: 300px;
+    width: 150px;
+    height: 150px;
     background-color: #4CAF50;
     border-radius: 50%;
     display: flex;
@@ -131,7 +133,7 @@ onMounted(() => {
 }
 
 .wheel.spinning {
-    animation: spin 3s cubic-bezier(0.25, 0.1, 0.25, 1);
+    animation: spin 5s cubic-bezier(0.25, 0.1, 0.25, 1);
 }
 
 .wheel-inner {

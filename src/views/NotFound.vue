@@ -1,34 +1,18 @@
 <template>
-    <div class="flex justify-center items-center bg-black/90 min-h-screen text-white font-epilogue">
-        <div class="text-center">
-            <h1 class="mb-3 font-dastress">404 🥺</h1>
-            <h2 class="mb-3 font-medium">Página No Encontrada</h2>
-            <p class="mb-7 text-white/80 xs:text-wrap w-80">
-                Lo sentimos, la página que estás buscando no existe o ha sido movida.
+    <main class="flex min-h-screen items-center justify-center px-4 py-10">
+        <section class="glass-panel w-full max-w-md p-8 text-center sm:p-10">
+            <p class="font-dastress text-[7rem] leading-none text-ember sm:text-[8.5rem]">404</p>
+            <h1 class="mt-4 text-2xl font-bold leading-tight">Página no encontrada</h1>
+            <p class="mx-auto mt-2 max-w-xs text-white/70">
+                El enlace puede estar mal escrito o la página ya no existe. Desde el inicio puedes generar o ver tu
+                ticket.
             </p>
-            <router-link to="/" class="bg-red-600 hover:bg-red-700 text-white py-3 px-6 rounded font-semibold text-lg">
-                Volver 
+            <router-link to="/home" class="btn-primary mt-8 w-full sm:w-auto">
+                Ir al inicio
             </router-link>
-        </div>
-    </div>
+        </section>
+    </main>
 </template>
 
 <script setup>
 </script>
-
-<style scoped>
-h1 {
-    font-size: 6rem;
-    color: var(--primary-color);
-    font-weight: bold;
-}
-
-h2 {
-    font-size: 2rem;
-    color: var(--text-color);
-}
-
-p {
-    font-size: 1.1rem;
-}
-</style>

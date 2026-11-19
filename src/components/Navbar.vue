@@ -1,13 +1,18 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
-import { Menu, X, Terminal } from "lucide-vue-next";
+import { computed, ref, onMounted, onUnmounted } from "vue";
+import { Menu, X } from "lucide-vue-next";
 import { useUserStore } from "../stores/userStore";
-import ButtonPrimarySecondEffect from "./ButtonPrimarySecondEffect.vue";
+import SessionMenu from "./SessionMenu.vue";
 
 const isMenuOpen = ref(false);
 const isScrolled = ref(false);
 const activeSection = ref("#inicio");
 const userStore = useUserStore();
+
+// An admin or a participant with a ticket sees the session menu
+const hasSession = computed(() =>
+    Boolean(userStore.username) || Boolean(userStore.userQr && (userStore.userCode || userStore.userDni))
+);
 
 const toggleMenu = () => {
     isMenuOpen.value = !isMenuOpen.value;
@@ -18,6 +23,7 @@ const updateActiveSection = () => {
         { id: "#inicio", element: document.querySelector("#inicio") },
         { id: "#paquetes", element: document.querySelector("#paquetes") },
         { id: "#auspiciadores", element: document.querySelector("#auspiciadores") },
+        { id: "#ubicacion", element: document.querySelector("#ubicacion") },
     ];
 
     for (const section of sections) {
@@ -47,80 +53,84 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <nav :class="[
-        'xl:px-4 lg:px-9 sm:px-20 xs:px-10 xl:mx-40 lg:mx-42 md:mx-42 sm:mx-30 py-4 fixed top-0 left-0 right-0 z-50 rounded-xl my-2 transition-all duration-500',
-        isScrolled ? 'xl:mx-44 lg:mx-42 md:mx-42 sm:mx-37 mx-2 bg-black/80 backdrop-blur-lg border border-white/40 shadow-lg xl:mr-60 xl:ml-60 lg:mr-32 lg:ml-32 sm:ml-11 sm:mr-11 xs:mr-7 xs:ml-7' : 'border-none bg-transparent backdrop-blur-2xl'
-    ]">
-        <div class="flex items-center justify-between relative">
-            <!-- Logo (centered) -->
-            <a href="#inicio" class="flex hover:scale-105 transition-transform font-semibold text-2xl">
-                <div class="flex items-center content-center">
-                    PAISI
-                    <Terminal />
-                </div>
+    <nav class="fixed inset-x-0 top-3 z-50 mx-auto w-[calc(100%-1.5rem)] max-w-5xl">
+        <div class="glass-panel flex items-center justify-between gap-4 rounded-2xl px-3 py-2 transition-colors duration-300 sm:px-4"
+            :class="isScrolled ? 'bg-night/75' : 'bg-night/35'">
+            <!-- Logo -->
+            <a href="#inicio" class="flex min-h-11 shrink-0 items-center gap-1.5 px-1 text-xl font-bold tracking-tight">
+                <span class="pt-0.5">PAISI</span>
             </a>
 
-            <!-- Center Menu -->
-            <div class="hidden lg:flex items-center gap-12 font-semibold mx-auto">
-                <a href="#inicio" :class="activeSection === '#inicio' ? 'text-red-300 font-bold' : 'hover:text-red-300'"
-                    class="transition-colors cursor-pointer">
-                    Inicio
-                </a>
-                <a href="https://maps.app.goo.gl/86TGP1KvfbczNvyb8" target="_blank"
-                    class="hover:text-red-300 transition-colors cursor-pointer">Ubicación</a>
-                <a href="#paquetes"
-                    :class="activeSection === '#paquetes' ? 'text-red-300 font-bold' : 'hover:text-red-300'"
-                    class="transition-colors cursor-pointer">
-                    Paquetes
-                </a>
-                <a href="#auspiciadores"
-                    :class="activeSection === '#auspiciadores' ? 'text-red-300 font-bold' : 'hover:text-red-300'"
-                    class="transition-colors cursor-pointer">
-                    Auspiciadores
-                </a>
-            </div>
+            <!-- Derecha: enlaces (desktop), sesión y menú hamburguesa (móvil). El CTA vive en el hero. -->
+            <div class="flex min-w-0 items-center gap-1">
+                <div class="hidden items-center gap-1 lg:flex">
+                    <a href="#inicio" class="nav-link"
+                        :class="activeSection === '#inicio' ? 'nav-active' : 'text-white/70 hover:text-white'"
+                        :aria-current="activeSection === '#inicio' ? 'location' : undefined">
+                        Inicio
+                    </a>
+                    <a href="#ubicacion" class="nav-link"
+                        :class="activeSection === '#ubicacion' ? 'nav-active' : 'text-white/70 hover:text-white'"
+                        :aria-current="activeSection === '#ubicacion' ? 'location' : undefined">
+                        Ubicación
+                    </a>
+                    <a href="#paquetes" class="nav-link"
+                        :class="activeSection === '#paquetes' ? 'nav-active' : 'text-white/70 hover:text-white'"
+                        :aria-current="activeSection === '#paquetes' ? 'location' : undefined">
+                        Paquetes
+                    </a>
+                    <a href="#auspiciadores" class="nav-link"
+                        :class="activeSection === '#auspiciadores' ? 'nav-active' : 'text-white/70 hover:text-white'"
+                        :aria-current="activeSection === '#auspiciadores' ? 'location' : undefined">
+                        Auspiciadores
+                    </a>
+                </div>
 
-            <!-- Button (Right) -->
-            <div class="hidden lg:block">
-                <ButtonPrimarySecondEffect class=""
-                    label="Generar"
-                    link="#generate" />
-            </div>
+                <SessionMenu v-if="hasSession" class="lg:ml-2" @open="isMenuOpen = false" />
 
-            <!-- Hamburger Menu (Mobile) -->
-            <button @click="toggleMenu" class="lg:hidden p-2 rounded-md hover:bg-gray-800/40">
-                <Menu v-if="!isMenuOpen" class="h-6 w-6 text-white" />
-                <X v-else class="h-6 w-6 text-white" />
-            </button>
+                <button type="button" @click="toggleMenu"
+                    class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition-colors hover:bg-white/5 lg:hidden"
+                    :aria-expanded="isMenuOpen" aria-controls="menu-movil"
+                    :aria-label="isMenuOpen ? 'Cerrar menú' : 'Abrir menú'">
+                    <Menu v-if="!isMenuOpen" class="h-6 w-6" />
+                    <X v-else class="h-6 w-6" />
+                </button>
+            </div>
         </div>
 
-        <!-- Mobile Menu -->
-        <div v-if="isMenuOpen" class="lg:hidden mt-4 py-4 px-2 bg-black/80 backdrop-blur-lg rounded-xl text-center">
-            <div class="flex flex-col gap-4">
-                <a href="#inicio" :class="activeSection === '#inicio' ? 'text-red-300 font-bold' : 'hover:text-red-300'"
-                    class="px-4 py-2 transition-colors cursor-pointer">
-                    Inicio
-                </a>
-                <a href="https://maps.app.goo.gl/86TGP1KvfbczNvyb8" target="_blank"
-                    class="px-4 py-2 hover:text-red-300 transition-colors cursor-pointer">
-                    Ubicación
-                </a>
-                <a href="#paquetes"
-                    :class="activeSection === '#paquetes' ? 'text-red-300 font-bold' : 'hover:text-red-300'"
-                    class="px-4 py-2 transition-colors cursor-pointer">
-                    Paquetes
-                </a>
-                <a href="#auspiciadores"
-                    :class="activeSection === '#auspiciadores' ? 'text-red-300 font-bold' : 'hover:text-red-300'"
-                    class="px-4 py-2 transition-colors cursor-pointer">
-                    Auspiciadores
-                </a>
-                <div class="flex justify-center">
-                    <ButtonPrimarySecondEffect class=""
-                    label="Generar"
-                    link="#generate" />
-                </div>
-            </div>
+        <!-- Menú móvil -->
+        <div v-if="isMenuOpen" id="menu-movil" class="glass-panel mt-2 flex flex-col gap-1 rounded-2xl p-2 lg:hidden"
+            @click="(event) => { if (event.target.closest('a')) isMenuOpen = false; }">
+            <a href="#inicio" class="mobile-link"
+                :class="activeSection === '#inicio' ? 'nav-active-side' : 'text-white/80 hover:text-white'"
+                :aria-current="activeSection === '#inicio' ? 'location' : undefined">
+                Inicio
+            </a>
+            <a href="#ubicacion" class="mobile-link"
+                :class="activeSection === '#ubicacion' ? 'nav-active-side' : 'text-white/80 hover:text-white'"
+                :aria-current="activeSection === '#ubicacion' ? 'location' : undefined">
+                Ubicación
+            </a>
+            <a href="#paquetes" class="mobile-link"
+                :class="activeSection === '#paquetes' ? 'nav-active-side' : 'text-white/80 hover:text-white'"
+                :aria-current="activeSection === '#paquetes' ? 'location' : undefined">
+                Paquetes
+            </a>
+            <a href="#auspiciadores" class="mobile-link"
+                :class="activeSection === '#auspiciadores' ? 'nav-active-side' : 'text-white/80 hover:text-white'"
+                :aria-current="activeSection === '#auspiciadores' ? 'location' : undefined">
+                Auspiciadores
+            </a>
         </div>
     </nav>
 </template>
+
+<style scoped>
+.nav-link {
+    @apply inline-flex min-h-11 items-center rounded-xl px-3.5 text-sm font-semibold transition-colors;
+}
+
+.mobile-link {
+    @apply flex min-h-11 items-center rounded-xl px-4 py-3 font-semibold transition-colors;
+}
+</style>

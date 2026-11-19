@@ -1,12 +1,8 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { db } from "../firebase";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { dataSource } from "../services/data";
+import { Search } from "lucide-vue-next";
 import DashLayout from "../layout/DashLayout.vue";
-
-// Referencia a las colecciones de Firestore
-const estudiantesRef = collection(db, "estudiantes");
-const invitadosRef = collection(db, "invitados");
 
 // Estados reactivos
 const participantes = ref([]);          // Todos los estudiantes e invitados combinados
@@ -19,23 +15,18 @@ const invitadosCantidad = ref([]);
 // Función para formatear fecha
 const formatearFecha = (timestamp) => {
     if (!timestamp) return "Sin registro";
-    const fecha = timestamp.toDate();
     return new Intl.DateTimeFormat("es-ES", {
         dateStyle: "short",
         timeStyle: "short",
-    }).format(fecha);
+    }).format(timestamp);
 };
 
 // Función para obtener estudiantes con status "registrado"
 const obtenerEstudiantesEgresados = async () => {
     try {
-        const q = query(estudiantesRef);
-        const querySnapshot = await getDocs(q);
-
-        const estudiantes = querySnapshot.docs.map((doc) => ({
-            id: doc.id,
+        const estudiantes = (await dataSource.listParticipants("estudiantes")).map((participante) => ({
             tipo: "estudiante",
-            ...doc.data(),
+            ...participante,
         }));
 
         return estudiantes;
@@ -48,13 +39,9 @@ const obtenerEstudiantesEgresados = async () => {
 // Función para obtener invitados con status "registrado"
 const obtenerInvitadosEgresados = async () => {
     try {
-        const q = query(invitadosRef);
-        const querySnapshot = await getDocs(q);
-
-        const invitados = querySnapshot.docs.map((doc) => ({
-            id: doc.id,
+        const invitados = (await dataSource.listParticipants("invitados")).map((participante) => ({
             tipo: "invitado",
-            ...doc.data(),
+            ...participante,
         }));
 
         return invitados;
@@ -95,75 +82,116 @@ onMounted(async () => {
 </script>
 
 <template>
-    <DashLayout class="bg-gradient-to-t !from-black/80 !via-black/90 !to-blue-900">
-        <div class="p-4 w-full relative rounded-lg bg-white text-gray-800">
-            <h1 class="xs:text-lg sm:text-2xl font-bold mb-4 text-center">
-                {{ estudiantesCantidad.length }} Estudiantes / {{ invitadosCantidad.length }} Invitado{{
-                    invitadosCantidad.length > 1 ? 's' : '' }}
-                Registrados
-            </h1>
+    <DashLayout>
+        <section class="glass-panel w-full max-w-5xl p-4 sm:p-6">
+            <header class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+                <div>
+                    <h1 class="text-2xl font-semibold tracking-tight sm:text-3xl">Historial de ingresos</h1>
+                    <p class="mt-1.5 text-sm text-white/65 sm:text-base">
+                        Revisa quién ya ingresó al fest y a qué hora.
+                    </p>
+                </div>
 
-
+                <dl class="grid grid-cols-3 gap-2 sm:gap-3 lg:w-[26rem]">
+                    <div class="rounded-2xl border border-white/10 bg-white/[0.04] px-2 py-3 text-center sm:px-4 sm:text-left">
+                        <dt class="text-xs text-white/60 sm:text-sm">Estudiantes</dt>
+                        <dd class="mt-0.5 text-xl font-semibold tabular-nums sm:text-2xl">
+                            {{ cargando ? '–' : estudiantesCantidad.length }}
+                        </dd>
+                    </div>
+                    <div class="rounded-2xl border border-white/10 bg-white/[0.04] px-2 py-3 text-center sm:px-4 sm:text-left">
+                        <dt class="text-xs text-white/60 sm:text-sm">Invitados</dt>
+                        <dd class="mt-0.5 text-xl font-semibold tabular-nums sm:text-2xl">
+                            {{ cargando ? '–' : invitadosCantidad.length }}
+                        </dd>
+                    </div>
+                    <div class="rounded-2xl border border-emerald-400/25 bg-emerald-400/[0.07] px-2 py-3 text-center sm:px-4 sm:text-left">
+                        <dt class="text-xs text-emerald-100/75 sm:text-sm">Ingresaron</dt>
+                        <dd class="mt-0.5 text-xl font-semibold tabular-nums text-emerald-200 sm:text-2xl">
+                            {{ cargando ? '–' : participantes.filter((p) => p.status === 'registrado').length }}
+                        </dd>
+                    </div>
+                </dl>
+            </header>
 
             <!-- Skeleton mientras carga -->
-            <div v-if="cargando" class="space-y-2">
-                <div class="animate-pulse bg-gray-200 h-10 w-2/4 rounded-md"></div>
-                <div class="animate-pulse bg-gray-200 h-40 w-full rounded-md"></div>
+            <div v-if="cargando" class="mt-6 animate-pulse space-y-3" aria-hidden="true">
+                <div class="h-12 w-full rounded-xl bg-white/10 sm:w-80"></div>
+                <div class="h-64 w-full rounded-2xl bg-white/10"></div>
             </div>
 
             <!-- Tabla responsiva -->
-            <div v-else>
+            <div v-else class="mt-6">
                 <!-- Campo de búsqueda -->
-                <div class="mb-4 flex justify-start">
-                    <input v-model="filtroCodDni" @input="combinarYFiltrarParticipantes" type="text"
-                        placeholder="Buscar por Código o DNI"
-                        class="px-4 py-2 border border-gray-500 rounded-md xs:w-4/5 md:w-1/2" :disabled="cargando" />
+                <label for="buscar-participante" class="field-label">Buscar por código o DNI</label>
+                <div class="relative w-full sm:max-w-sm">
+                    <Search class="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-white/45"
+                        aria-hidden="true" />
+                    <input id="buscar-participante" v-model="filtroCodDni" @input="combinarYFiltrarParticipantes"
+                        type="text" placeholder="Escribe un código o DNI" class="field-input pl-12"
+                        autocomplete="off" spellcheck="false" :disabled="cargando" />
                 </div>
-                <div class="overflow-x-auto overflow-y-auto max-h-96 min-h-40">
-                    <table class="min-w-full border-collapse border border-gray-300 rounded-xl">
+
+                <div class="mt-4 max-h-[28rem] min-h-40 overflow-auto rounded-2xl border border-white/10">
+                    <table class="w-full min-w-[40rem] border-collapse text-left">
                         <thead>
-                            <tr class="bg-gray-200 rounded-xl">
-                                <th class="border border-gray-300 px-4 py-2">Código / DNI</th>
-                                <th class="border border-gray-300 px-4 py-2">Nombre</th>
-                                <th class="border border-gray-300 px-4 py-2">Estado</th>
-                                <th class="border border-gray-300 px-4 py-2">Fecha y Hora</th>
+                            <tr>
+                                <th scope="col"
+                                    class="sticky top-0 z-10 whitespace-nowrap bg-ink/95 px-4 py-3 text-sm font-medium text-white/60 backdrop-blur">
+                                    Código / DNI</th>
+                                <th scope="col"
+                                    class="sticky top-0 z-10 whitespace-nowrap bg-ink/95 px-4 py-3 text-sm font-medium text-white/60 backdrop-blur">
+                                    Nombre</th>
+                                <th scope="col"
+                                    class="sticky top-0 z-10 whitespace-nowrap bg-ink/95 px-4 py-3 text-sm font-medium text-white/60 backdrop-blur">
+                                    Estado</th>
+                                <th scope="col"
+                                    class="sticky top-0 z-10 whitespace-nowrap bg-ink/95 px-4 py-3 text-sm font-medium text-white/60 backdrop-blur">
+                                    Fecha y hora</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr v-for="participante in participantesFiltrados" :key="participante.id"
-                                class="hover:bg-gray-100 font-medium">
-                                <td class="border border-gray-300 px-4 py-2">
+                                class="border-t border-white/[0.06] hover:bg-white/[0.04]">
+                                <td class="whitespace-nowrap px-4 py-3 font-medium tabular-nums">
                                     {{ participante.tipo === 'estudiante' ? participante.cod : participante.dni }}
                                 </td>
-                                <td class="border border-gray-300 px-4 py-2">{{ participante.nombres }} /
-                                    <span class="font-bold">
+                                <td class="px-4 py-3">
+                                    <span class="block font-medium">{{ participante.nombres }}</span>
+                                    <span class="mt-1 inline-flex items-center rounded-full px-2 py-0.5 text-xs font-semibold ring-1"
+                                        :class="participante.tipo === 'estudiante'
+                                            ? 'bg-sky-400/15 text-sky-200 ring-sky-300/30'
+                                            : 'bg-flare/15 text-flare ring-flare/30'">
                                         {{ participante.tipo === 'estudiante' ? 'Estudiante' : 'Invitado' }}
                                     </span>
                                 </td>
-                                <td class="border border-gray-300 px-4 py-2 text-sm">
-                                    <span class="bg-green-500 text-white rounded-md px-2 py-1"
-                                        v-if="participante.status === 'registrado'">
-                                        {{ participante.status }}
+                                <td class="whitespace-nowrap px-4 py-3">
+                                    <span v-if="participante.status === 'registrado'"
+                                        class="inline-flex items-center gap-1.5 rounded-full bg-emerald-400/15 px-2.5 py-1 text-sm font-semibold text-emerald-200 ring-1 ring-emerald-400/30">
+                                        <span class="h-1.5 w-1.5 rounded-full bg-emerald-300" aria-hidden="true"></span>
+                                        Ingresó
                                     </span>
-                                    <span class="bg-red-500/80 text-white rounded-md px-2 py-1" v-else>
-                                        {{ participante.status ? participante.status : 'no_registrado' }}
+                                    <span v-else
+                                        class="inline-flex items-center gap-1.5 rounded-full bg-white/5 px-2.5 py-1 text-sm font-semibold text-white/60 ring-1 ring-white/15">
+                                        <span class="h-1.5 w-1.5 rounded-full bg-white/40" aria-hidden="true"></span>
+                                        Pendiente
                                     </span>
                                 </td>
-                                <td class="border border-gray-300 px-4 py-2">
+                                <td class="whitespace-nowrap px-4 py-3 tabular-nums text-white/70">
                                     {{ formatearFecha(participante.timestamp) }}
                                 </td>
                             </tr>
                             <tr v-if="participantesFiltrados.length === 0">
-                                <td colspan="4" class="text-center text-gray-500 border border-gray-300 px-4 py-2 h-40">
-                                    No se encontraron resultados
+                                <td colspan="4" class="h-40 px-4 py-6 text-center text-white/60">
+                                    {{ filtroCodDni
+                                        ? 'Ningún participante coincide con ese código o DNI. Revisa el número e intenta de nuevo.'
+                                        : 'Todavía no hay participantes cargados.' }}
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
-        </div>
+        </section>
     </DashLayout>
 </template>
-
-<style></style>

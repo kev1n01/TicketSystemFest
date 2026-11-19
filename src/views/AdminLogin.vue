@@ -1,52 +1,48 @@
 <template>
-  <div
-    class="flex flex-col items-center justify-center min-h-screen bg-gradient-to-t from-black/80 via-black/90 to-blue-900 text-white px-4 sm:px-6 lg:px-8 font-epilogue">
-    <form @submit.prevent="handleLogin" class="bg-white p-6 sm:p-8 rounded-lg shadow-xl w-full max-w-sm sm:max-w-md">
-      <h2 class="text-xl sm:text-2xl font-bold text-center text-gray-800 mb-6">
-        Iniciar Sesión
-      </h2>
+  <main class="flex min-h-screen flex-col items-center justify-center px-4 py-12 sm:px-6">
+    <form @submit.prevent="handleLogin" class="glass-panel w-full max-w-sm p-6 sm:max-w-md sm:p-8">
+      <h1 class="text-2xl font-semibold tracking-tight sm:text-3xl">Iniciar sesión</h1>
+      <p class="mt-1.5 text-sm text-white/65 sm:text-base">
+        Ingresa tu usuario de staff para escanear tickets y gestionar el sorteo.
+      </p>
 
-      <div>
-        <p v-if="messageValidateError !== ''"
-          class="text-red-600 text-sm md:text-base mb-4 font-semibold text-center p-2 bg-red-300/40 border border-red-400 rounded-md">
+      <div class="mt-6 space-y-3 empty:hidden" aria-live="polite">
+        <p v-if="messageValidateError !== ''" class="alert-error">
           {{ messageValidateError }}
         </p>
-        <p v-if="messageValidateSuccess !== ''"
-          class="text-green-600 text-sm md:text-base mb-4 font-semibold text-center p-2 bg-green-300/40 border border-green-400 rounded-md">
+        <p v-if="messageValidateSuccess !== ''" class="alert-success">
           {{ messageValidateSuccess }}
         </p>
       </div>
 
       <!-- Usuario -->
-      <div class="mb-6">
-        <label for="username" class="block text-sm sm:text-base font-medium text-gray-700 mb-1">
-          Nombre de usuario
-        </label>
-        <input v-model="username" type="text" id="username" placeholder="Ingresa tu usuario"
-          class="w-full p-3 sm:p-4 border border-gray-300 rounded-lg shadow-sm focus:ring-blue-500 focus:border-blue-500 text-gray-900"
-          spellcheck="false" required autofocus />
+      <div class="mt-6">
+        <label for="username" class="field-label">Nombre de usuario</label>
+        <input v-model="username" type="text" id="username" placeholder="Ingresa tu usuario" class="field-input"
+          autocomplete="username" autocapitalize="none" spellcheck="false" required autofocus />
       </div>
 
       <!-- Botón -->
       <button type="submit" :disabled="loading"
-        class="w-full bg-blue-600 text-white py-2 sm:py-3 rounded-lg font-semibold shadow-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 transition duration-200 flex items-center justify-center">
-        <LoaderCircle v-if="loading" class="animate-spin mr-2" />
-        <span>{{ loading ? "Validando..." : "Ingresar" }}</span>
+        class="btn-primary mt-6 min-h-12 w-full bg-lilac text-night hover:bg-lilac/90">
+        <LoaderCircle v-if="loading" class="h-5 w-5 animate-spin" aria-hidden="true" />
+        <span>{{ loading ? "Validando…" : "Ingresar" }}</span>
       </button>
-
-      <!-- Mostrar mensaje de error -->
-      <div v-if="error" class="mt-4 text-sm text-center text-red-500">
-        {{ errorMessage }}
-      </div>
     </form>
-  </div>
+
+    <router-link to="/home"
+      class="mt-4 inline-flex min-h-11 items-center gap-2 rounded-lg px-3 text-sm font-medium text-white/65 transition-colors hover:text-white">
+      <ArrowLeft class="h-4 w-4" aria-hidden="true" />
+      Volver al inicio
+    </router-link>
+  </main>
 </template>
 
 <script setup>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "../stores/userStore";
-import { LoaderCircle } from "lucide-vue-next";
+import { LoaderCircle, ArrowLeft } from "lucide-vue-next";
 import speaker from "../speaker";
 
 const router = useRouter();

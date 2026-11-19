@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import { ChevronRight, Package } from "lucide-vue-next";
+import { ChevronRight } from "lucide-vue-next";
 
 const abiertoPaquete = 0;
 const isOpen = ref(Array(5).fill(false));
@@ -79,10 +79,7 @@ const items = [
                         class="flex min-h-14 w-full items-center justify-between gap-4 px-5 py-4 text-left text-lg font-semibold transition-colors hover:bg-white/5 sm:px-6"
                         :class="isOpen[index] ? 'bg-white/5' : ''"
                         :aria-expanded="isOpen[index]" :aria-controls="`paquete-${index}`">
-                        <span class="flex items-center gap-3">
-                            <Package class="h-5 w-5 shrink-0 text-flare" aria-hidden="true" />
-                            {{ item.title }}
-                        </span>
+                        <span>{{ item.title }}</span>
 
                         <span class="flex items-center gap-2 text-white/60">
                             <span v-if="item.hour" class="text-base font-medium">{{ item.hour }}</span>
@@ -91,7 +88,7 @@ const items = [
                         </span>
                     </button>
                     <div v-show="isOpen[index]" :id="`paquete-${index}`"
-                        class="space-y-1 bg-white/5 px-5 pb-5 text-white/75 sm:px-6 sm:pl-14">
+                        class="space-y-1 bg-white/5 px-5 pb-5 text-white/75 sm:px-6">
                         <p v-for="line in item.parsedDescription.mainDescription" :key="line">
                             {{ line }}
                         </p>

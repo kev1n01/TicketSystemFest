@@ -3,6 +3,7 @@ import Navbar from '../components/Navbar.vue'
 import Hero from '../components/Hero.vue'
 import Package from '../components/Package.vue'
 import Sponsors from '../components/Sponsors.vue'
+import LocationMap from '../components/LocationMap.vue'
 import Foot from '../components/Foot.vue'
 import ButtonToTop from '../components/ButtonToTop.vue'
 
@@ -25,6 +26,9 @@ import ButtonToTop from '../components/ButtonToTop.vue'
 
                 <!-- Auspiciadores -->
                 <Sponsors />
+
+                <!-- Ubicación -->
+                <LocationMap />
             </main>
 
             <ButtonToTop />

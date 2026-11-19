@@ -1,13 +1,19 @@
 <script setup>
-import { ref, onMounted, onUnmounted } from "vue";
+import { computed, ref, onMounted, onUnmounted } from "vue";
 import { Menu, X, Terminal } from "lucide-vue-next";
 import { useUserStore } from "../stores/userStore";
 import ButtonPrimarySecondEffect from "./ButtonPrimarySecondEffect.vue";
+import SessionMenu from "./SessionMenu.vue";
 
 const isMenuOpen = ref(false);
 const isScrolled = ref(false);
 const activeSection = ref("#inicio");
 const userStore = useUserStore();
+
+// An admin or a participant with a ticket sees the session menu instead of the "Generar" CTA
+const hasSession = computed(() =>
+    Boolean(userStore.username) || Boolean(userStore.userQr && (userStore.userCode || userStore.userDni))
+);
 
 const toggleMenu = () => {
     isMenuOpen.value = !isMenuOpen.value;
@@ -18,6 +24,7 @@ const updateActiveSection = () => {
         { id: "#inicio", element: document.querySelector("#inicio") },
         { id: "#paquetes", element: document.querySelector("#paquetes") },
         { id: "#auspiciadores", element: document.querySelector("#auspiciadores") },
+        { id: "#ubicacion", element: document.querySelector("#ubicacion") },
     ];
 
     for (const section of sections) {
@@ -51,7 +58,7 @@ onUnmounted(() => {
         <div class="glass-panel flex items-center justify-between gap-4 rounded-2xl px-3 py-2 transition-colors duration-300 sm:px-4"
             :class="isScrolled ? 'bg-night/75' : 'bg-night/35'">
             <!-- Logo -->
-            <a href="#inicio" class="flex min-h-11 items-center gap-1.5 px-1 text-xl font-bold tracking-tight">
+            <a href="#inicio" class="flex min-h-11 shrink-0 items-center gap-1.5 px-1 text-xl font-bold tracking-tight">
                 <span class="pt-0.5">PAISI</span>
                 <Terminal class="h-5 w-5 text-flare" aria-hidden="true" />
             </a>
@@ -63,8 +70,9 @@ onUnmounted(() => {
                     :aria-current="activeSection === '#inicio' ? 'location' : undefined">
                     Inicio
                 </a>
-                <a href="https://maps.app.goo.gl/86TGP1KvfbczNvyb8" target="_blank" rel="noopener noreferrer"
-                    class="nav-link text-white/70 hover:bg-white/5 hover:text-white">
+                <a href="#ubicacion" class="nav-link"
+                    :class="activeSection === '#ubicacion' ? 'bg-ember/20 text-white' : 'text-white/70 hover:bg-white/5 hover:text-white'"
+                    :aria-current="activeSection === '#ubicacion' ? 'location' : undefined">
                     Ubicación
                 </a>
                 <a href="#paquetes" class="nav-link"
@@ -79,30 +87,34 @@ onUnmounted(() => {
                 </a>
             </div>
 
-            <!-- Botón (derecha) -->
-            <div class="hidden lg:block">
-                <ButtonPrimarySecondEffect label="Generar" link="#generate" />
-            </div>
+            <!-- Derecha: sesión o CTA, y menú hamburguesa en móvil -->
+            <div class="flex min-w-0 items-center gap-1">
+                <SessionMenu v-if="hasSession" @open="isMenuOpen = false" />
+                <div v-else class="hidden lg:block">
+                    <ButtonPrimarySecondEffect label="Generar" link="/generate-ticket" />
+                </div>
 
-            <!-- Menú hamburguesa (móvil) -->
-            <button type="button" @click="toggleMenu"
-                class="inline-flex h-11 w-11 items-center justify-center rounded-xl transition-colors hover:bg-white/5 lg:hidden"
-                :aria-expanded="isMenuOpen" aria-controls="menu-movil"
-                :aria-label="isMenuOpen ? 'Cerrar menú' : 'Abrir menú'">
-                <Menu v-if="!isMenuOpen" class="h-6 w-6" />
-                <X v-else class="h-6 w-6" />
-            </button>
+                <button type="button" @click="toggleMenu"
+                    class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition-colors hover:bg-white/5 lg:hidden"
+                    :aria-expanded="isMenuOpen" aria-controls="menu-movil"
+                    :aria-label="isMenuOpen ? 'Cerrar menú' : 'Abrir menú'">
+                    <Menu v-if="!isMenuOpen" class="h-6 w-6" />
+                    <X v-else class="h-6 w-6" />
+                </button>
+            </div>
         </div>
 
         <!-- Menú móvil -->
-        <div v-if="isMenuOpen" id="menu-movil" class="glass-panel mt-2 flex flex-col gap-1 rounded-2xl p-2 lg:hidden">
+        <div v-if="isMenuOpen" id="menu-movil" class="glass-panel mt-2 flex flex-col gap-1 rounded-2xl p-2 lg:hidden"
+            @click="(event) => { if (event.target.closest('a')) isMenuOpen = false; }">
             <a href="#inicio" class="mobile-link"
                 :class="activeSection === '#inicio' ? 'bg-ember/20' : 'text-white/80 hover:bg-white/5'"
                 :aria-current="activeSection === '#inicio' ? 'location' : undefined">
                 Inicio
             </a>
-            <a href="https://maps.app.goo.gl/86TGP1KvfbczNvyb8" target="_blank" rel="noopener noreferrer"
-                class="mobile-link text-white/80 hover:bg-white/5">
+            <a href="#ubicacion" class="mobile-link"
+                :class="activeSection === '#ubicacion' ? 'bg-ember/20' : 'text-white/80 hover:bg-white/5'"
+                :aria-current="activeSection === '#ubicacion' ? 'location' : undefined">
                 Ubicación
             </a>
             <a href="#paquetes" class="mobile-link"
@@ -115,7 +127,7 @@ onUnmounted(() => {
                 :aria-current="activeSection === '#auspiciadores' ? 'location' : undefined">
                 Auspiciadores
             </a>
-            <ButtonPrimarySecondEffect class="mt-1" label="Generar" link="#generate" />
+            <ButtonPrimarySecondEffect v-if="!hasSession" class="mt-1" label="Generar" link="/generate-ticket" />
         </div>
     </nav>
 </template>

@@ -1,12 +1,17 @@
 <template>
   <div>
-    <router-view />
-    <DemoModeBanner v-if="DemoModeBanner" />
+    <!-- Fixed "Eclipse Flare" layers; they blend against the body color, so keep them as siblings -->
+    <AuraBackground />
+    <div class="relative z-[1] min-h-screen">
+      <router-view />
+      <DemoModeBanner v-if="DemoModeBanner" />
+    </div>
   </div>
 </template>
 
 <script setup>
 import { defineAsyncComponent } from "vue";
+import AuraBackground from "./components/AuraBackground.vue";
 import { isDemoMode } from "./services/data";
 
 // Only loaded when the app runs on demo data (no Firebase credentials).
@@ -21,7 +26,3 @@ const DemoModeBanner = isDemoMode
 //   localStorage.clear();
 // });
 </script>
-
-<style scoped>
-
-</style>

@@ -10,7 +10,7 @@
 
       <div class="scanner-container">
         <!-- Escáner -->
-        <div id="reader" class="scanner mx-auto" style="width: 100%; aspect-ratio: 2 / 1;"></div>
+        <div id="reader" class="scanner"></div>
         <!-- Barra de animación -->
         <div class="scanner-bar" aria-hidden="true"></div>
         <!-- Esquinas del recuadro -->
@@ -54,12 +54,10 @@
                 Código: {{ participantData.cod }}
               </p>
             </div>
-            <span class="inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-semibold ring-1"
+            <span class="inline-flex shrink-0 items-center rounded-full px-3 py-1.5 text-sm font-semibold ring-1"
               :class="typeParticipant === 'invitado'
                 ? 'bg-flare/15 text-flare ring-flare/35'
                 : 'bg-sky-400/15 text-sky-200 ring-sky-300/35'">
-              <Ticket v-if="typeParticipant === 'invitado'" class="h-4 w-4" aria-hidden="true" />
-              <GraduationCap v-else class="h-4 w-4" aria-hidden="true" />
               Ticket {{ typeParticipant }}
             </span>
           </div>
@@ -72,7 +70,6 @@
 import { ref, onMounted, onUnmounted } from "vue";
 import { Html5Qrcode } from "html5-qrcode";
 import { useUserStore } from "../stores/userStore";
-import { Ticket, GraduationCap } from "lucide-vue-next";
 import DashLayout from "../layout/DashLayout.vue";
 
 const userStore = useUserStore();
@@ -129,7 +126,11 @@ const startScanner = () => {
       { facingMode: "environment" },
       {
         fps: 10, // Frames por segundo
-        qrbox: { width: 250, height: 350 }, // Área del escaneo
+        // Área de escaneo cuadrada: 70% del lado menor de la cámara, sea vertical (móvil) u horizontal
+        qrbox: (width, height) => {
+          const size = Math.max(160, Math.floor(Math.min(width, height) * 0.7));
+          return { width: size, height: size };
+        },
       },
       (decodedText) => {
         onDecode(decodedText);
@@ -159,11 +160,11 @@ onUnmounted(() => {
 
 
 <style scoped>
+/* The height follows the camera stream, so portrait phone cameras are shown in full */
 .scanner-container {
   position: relative;
   width: 100%;
-  /* Alto fijo */
-  height: 300px;
+  min-height: 16rem;
   background: #000;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 1.25rem;
@@ -172,11 +173,18 @@ onUnmounted(() => {
 
 /* Escáner */
 .scanner {
-  position: absolute;
+  position: relative;
   width: 100%;
-  height: 300px !important;
-  background: rgba(0, 0, 0, 0.1);
-  padding-top: 0px;
+  border: 0 !important;
+}
+
+/* html5-qrcode injects the <video> at runtime, so it needs :deep() to be styled */
+.scanner :deep(video) {
+  display: block;
+  width: 100% !important;
+  height: auto !important;
+  max-height: 75vh;
+  object-fit: contain;
 }
 
 /* Barra animada */

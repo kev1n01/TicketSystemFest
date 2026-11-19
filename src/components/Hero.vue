@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from "vue";
-import ButtonPrimarySecondEffect from './ButtonPrimarySecondEffect.vue';
 import EventTicket from "./EventTicket.vue";
+import ShimmerButton from "./ShimmerButton.vue";
 import { useUserStore } from "../stores/userStore";
 
 const userStore = useUserStore();
@@ -30,6 +30,12 @@ const isParticipant = computed(() =>
                 <li class="fact-chip">01:00 PM hasta el día siguiente</li>
                 <li class="fact-chip">Mistika casa club</li>
             </ul>
+
+            <!-- Sin sesión: un solo punto de entrada; estudiante o invitado se elige en el formulario -->
+            <div v-if="!isParticipant && !isAdmin" id="generate" class="mt-10 flex scroll-mt-24 flex-col items-center sm:mt-12">
+                <ShimmerButton to="/generate-ticket">Generar ticket</ShimmerButton>
+                <p class="mt-3 text-sm text-white/65">Estudiante o invitado: lo eliges en el siguiente paso.</p>
+            </div>
         </div>
 
         <!-- Participante con sesión: su ticket listo para mostrar en la entrada.
@@ -61,28 +67,6 @@ const isParticipant = computed(() =>
                 <RouterLink to="/scanner" class="btn-primary min-h-11">Escanear tickets</RouterLink>
                 <RouterLink to="/historial-register" class="btn-secondary min-h-11">Historial de ingresos</RouterLink>
                 <RouterLink to="/lottery" class="btn-secondary min-h-11">Sorteo</RouterLink>
-            </div>
-        </div>
-
-        <!-- Sin sesión: generar ticket -->
-        <div v-else id="generate" class="scroll-mt-24 pb-16 sm:pb-20">
-            <h2 class="text-2xl font-semibold sm:text-3xl">Genera tu ticket</h2>
-            <p class="mt-2 max-w-xl text-white/70">
-                Para ingresar al evento necesitas tu ticket digital con código QR. Elige cómo generarlo.
-            </p>
-
-            <div class="mt-6 grid gap-4 sm:grid-cols-2 sm:gap-6">
-                <article class="glass-panel flex flex-col p-6 sm:p-8">
-                    <h3 class="text-xl font-semibold">Invitado</h3>
-                    <p class="mt-2 flex-1 text-white/70">Usa tu DNI para generar tu ticket de invitado.</p>
-                    <ButtonPrimarySecondEffect class="mt-6 w-full" label="Generar ticket" link="/generate-ticket-guess" />
-                </article>
-
-                <article class="glass-panel flex flex-col p-6 sm:p-8">
-                    <h3 class="text-xl font-semibold">Estudiante</h3>
-                    <p class="mt-2 flex-1 text-white/70">Usa tu código de estudiante para generar tu ticket.</p>
-                    <ButtonPrimarySecondEffect class="mt-6 w-full" label="Generar ticket" link="/generate-ticket" />
-                </article>
             </div>
         </div>
     </section>

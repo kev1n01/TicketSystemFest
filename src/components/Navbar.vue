@@ -2,7 +2,6 @@
 import { computed, ref, onMounted, onUnmounted } from "vue";
 import { Menu, X } from "lucide-vue-next";
 import { useUserStore } from "../stores/userStore";
-import ButtonPrimarySecondEffect from "./ButtonPrimarySecondEffect.vue";
 import SessionMenu from "./SessionMenu.vue";
 
 const isMenuOpen = ref(false);
@@ -10,7 +9,7 @@ const isScrolled = ref(false);
 const activeSection = ref("#inicio");
 const userStore = useUserStore();
 
-// An admin or a participant with a ticket sees the session menu instead of the "Generar" CTA
+// An admin or a participant with a ticket sees the session menu
 const hasSession = computed(() =>
     Boolean(userStore.username) || Boolean(userStore.userQr && (userStore.userCode || userStore.userDni))
 );
@@ -62,36 +61,32 @@ onUnmounted(() => {
                 <span class="pt-0.5">PAISI</span>
             </a>
 
-            <!-- Menú desktop -->
-            <div class="hidden items-center gap-1 lg:flex">
-                <a href="#inicio" class="nav-link"
-                    :class="activeSection === '#inicio' ? 'nav-active' : 'text-white/70 hover:text-white'"
-                    :aria-current="activeSection === '#inicio' ? 'location' : undefined">
-                    Inicio
-                </a>
-                <a href="#ubicacion" class="nav-link"
-                    :class="activeSection === '#ubicacion' ? 'nav-active' : 'text-white/70 hover:text-white'"
-                    :aria-current="activeSection === '#ubicacion' ? 'location' : undefined">
-                    Ubicación
-                </a>
-                <a href="#paquetes" class="nav-link"
-                    :class="activeSection === '#paquetes' ? 'nav-active' : 'text-white/70 hover:text-white'"
-                    :aria-current="activeSection === '#paquetes' ? 'location' : undefined">
-                    Paquetes
-                </a>
-                <a href="#auspiciadores" class="nav-link"
-                    :class="activeSection === '#auspiciadores' ? 'nav-active' : 'text-white/70 hover:text-white'"
-                    :aria-current="activeSection === '#auspiciadores' ? 'location' : undefined">
-                    Auspiciadores
-                </a>
-            </div>
-
-            <!-- Derecha: sesión o CTA, y menú hamburguesa en móvil -->
+            <!-- Derecha: enlaces (desktop), sesión y menú hamburguesa (móvil). El CTA vive en el hero. -->
             <div class="flex min-w-0 items-center gap-1">
-                <SessionMenu v-if="hasSession" @open="isMenuOpen = false" />
-                <div v-else class="hidden lg:block">
-                    <ButtonPrimarySecondEffect label="Generar" link="/generate-ticket" />
+                <div class="hidden items-center gap-1 lg:flex">
+                    <a href="#inicio" class="nav-link"
+                        :class="activeSection === '#inicio' ? 'nav-active' : 'text-white/70 hover:text-white'"
+                        :aria-current="activeSection === '#inicio' ? 'location' : undefined">
+                        Inicio
+                    </a>
+                    <a href="#ubicacion" class="nav-link"
+                        :class="activeSection === '#ubicacion' ? 'nav-active' : 'text-white/70 hover:text-white'"
+                        :aria-current="activeSection === '#ubicacion' ? 'location' : undefined">
+                        Ubicación
+                    </a>
+                    <a href="#paquetes" class="nav-link"
+                        :class="activeSection === '#paquetes' ? 'nav-active' : 'text-white/70 hover:text-white'"
+                        :aria-current="activeSection === '#paquetes' ? 'location' : undefined">
+                        Paquetes
+                    </a>
+                    <a href="#auspiciadores" class="nav-link"
+                        :class="activeSection === '#auspiciadores' ? 'nav-active' : 'text-white/70 hover:text-white'"
+                        :aria-current="activeSection === '#auspiciadores' ? 'location' : undefined">
+                        Auspiciadores
+                    </a>
                 </div>
+
+                <SessionMenu v-if="hasSession" class="lg:ml-2" @open="isMenuOpen = false" />
 
                 <button type="button" @click="toggleMenu"
                     class="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition-colors hover:bg-white/5 lg:hidden"
@@ -126,7 +121,6 @@ onUnmounted(() => {
                 :aria-current="activeSection === '#auspiciadores' ? 'location' : undefined">
                 Auspiciadores
             </a>
-            <ButtonPrimarySecondEffect v-if="!hasSession" class="mt-1" label="Generar" link="/generate-ticket" />
         </div>
     </nav>
 </template>

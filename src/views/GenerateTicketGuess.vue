@@ -15,6 +15,7 @@
             </div>
 
             <form @submit.prevent="handleSubmit" class="glass-panel p-6 sm:p-8">
+                <TicketTypeTabs />
                 <h1 class="text-2xl font-bold leading-tight">Genera tu ticket de invitado</h1>
                 <p class="mt-2 text-white/70">
                     Con tu DNI obtienes el QR que mostrarás en la entrada.
@@ -39,14 +40,6 @@
                         <span>{{ loading ? "Generando…" : "Generar ticket" }}</span>
                     </button>
                 </div>
-
-                <p class="mt-6 border-t border-white/10 pt-4 text-center text-sm text-white/70">
-                    ¿Eres estudiante?
-                    <router-link to="/generate-ticket"
-                        class="inline-flex min-h-[44px] items-center font-semibold text-white underline decoration-flare/60 underline-offset-4 transition-colors hover:decoration-flare">
-                        Usa tu código universitario
-                    </router-link>
-                </p>
             </form>
 
             <div class="mt-4 flex justify-center">
@@ -65,6 +58,7 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "../stores/userStore";
 import { LoaderCircle, ArrowLeft } from "lucide-vue-next";
+import TicketTypeTabs from "../components/TicketTypeTabs.vue";
 
 const router = useRouter();
 const userStore = useUserStore();

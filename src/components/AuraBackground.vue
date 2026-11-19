@@ -1,5 +1,6 @@
 <!--
-  "Eclipse Flare" background from Aura Gradients (auragradients.vercel.app).
+  "Crimson Veil" background from Aura Gradients (auragradients.vercel.app), animated with a slow
+  drift so the red horizon rises and settles like stage light.
   The layers use mix-blend-mode against the body color (#100e0b), so they are rendered as
   fixed siblings of the page content and must not be wrapped in a container that creates
   its own stacking context, or the blend would composite against transparency instead.
@@ -12,32 +13,55 @@
 <style scoped>
 .aura-layer {
   position: fixed;
-  inset: 0;
+  /* Taller than the viewport so the drift never exposes an edge */
+  inset: -12% 0;
   pointer-events: none;
-  transform: translateZ(0);
+  /* Crimson Veil stops, toned down (no white band, deeper reds) so glass panels stay legible */
+  background: linear-gradient(rgba(0, 0, 0, 0) 0%, rgba(150, 20, 24, 0.85) 38%, rgba(220, 38, 38, 0.9) 62%, rgb(255, 140, 110) 84%, rgb(251, 146, 60) 100%);
   will-change: transform;
 }
 
 .aura-layer-1 {
-  background: radial-gradient(ellipse 89% 99% at 50% -38%, rgba(0, 0, 0, 0) 0%, rgb(30, 32, 35) 38%, rgb(45, 70, 115) 70%, rgb(142, 123, 227) 90%, rgb(248, 104, 196) 100%);
   mix-blend-mode: hard-light;
-  filter: blur(125px);
-  opacity: 0.5;
+  filter: blur(63px);
+  opacity: 0.55;
+  animation: aura-drift 16s ease-in-out infinite alternate;
 }
 
 .aura-layer-2 {
-  background: radial-gradient(ellipse 95% 105% at 50% -34%, rgba(0, 0, 0, 0.15) 0%, rgb(30, 32, 35) 42%, rgb(55, 82, 135) 74%, rgb(150, 126, 228) 92%, rgb(246, 108, 198) 100%);
   mix-blend-mode: soft-light;
-  filter: blur(200px);
+  filter: blur(88px);
+  opacity: 0.8;
+  animation: aura-drift 22s ease-in-out -8s infinite alternate-reverse;
 }
 
 @media (min-width: 768px) {
   .aura-layer-1 {
-    filter: blur(180px);
+    filter: blur(90px);
   }
 
   .aura-layer-2 {
-    filter: blur(260px);
+    filter: blur(126px);
+  }
+}
+
+@keyframes aura-drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate3d(0, -5%, 0) scale(1.04);
+  }
+
+  100% {
+    transform: translate3d(0, 4%, 0) scale(1.02);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aura-layer {
+    animation: none;
   }
 }
 </style>

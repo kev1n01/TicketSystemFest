@@ -74,7 +74,6 @@ import { Html5Qrcode } from "html5-qrcode";
 import { useUserStore } from "../stores/userStore";
 import { Ticket, GraduationCap } from "lucide-vue-next";
 import DashLayout from "../layout/DashLayout.vue";
-import speaker from "../speaker";
 
 const userStore = useUserStore();
 const participantData = ref(null);
@@ -105,7 +104,6 @@ const onDecode = async (decodedString) => {
         participantData.value = result.data;
       }
       messageValidateError.value = result.message;
-      // speaker(result.message);
       return;
     }
 
@@ -113,7 +111,6 @@ const onDecode = async (decodedString) => {
       participantData.value = result.data;
       messageValidateSuccess.value = result.message;
       typeParticipant.value = result.type;
-      // speaker(result.message);
     }
   } catch (error) {
     messageValidateError.value = "Ocurrió un error durante el escaneo. Intenta nuevamente.";

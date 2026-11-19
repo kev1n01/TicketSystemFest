@@ -65,7 +65,6 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "../stores/userStore";
 import { LoaderCircle, ArrowLeft } from "lucide-vue-next";
-import speaker from "../speaker";
 
 const router = useRouter();
 const userStore = useUserStore();

@@ -3,7 +3,6 @@ import { computed, ref } from "vue";
 import { useUserStore } from "../stores/userStore";
 import { Terminal, Ticket, LogOut, HistoryIcon, Menu, X, ScanLine, Shuffle, Trophy } from "lucide-vue-next";
 import { useRouter, useRoute } from "vue-router";
-import speaker from "../speaker";
 
 const router = useRouter();
 const route = useRoute();
@@ -39,11 +38,6 @@ const links = computed(() => {
 // Función para manejar el logout
 const handleLogout = () => {
     const redirect = isAdmin.value ? "/admin" : "/home";
-    if (isAdmin.value) {
-        speaker(`Adiós admin de mi corazón`);
-    } else {
-        speaker(`Adiós ${userStore.userFullName}`);
-    }
     userStore.logout();
     router.push(redirect);
 };

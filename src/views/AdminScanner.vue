@@ -126,9 +126,12 @@ const startScanner = () => {
       { facingMode: "environment" },
       {
         fps: 10, // Frames por segundo
-        // Área de escaneo cuadrada: 70% del lado menor de la cámara, sea vertical (móvil) u horizontal
+        // Cámara vertical 3:4 (ancho / alto). El navegador recorta el stream a esa proporción, así el
+        // recuadro visible y la zona que se decodifica coinciden (la librería no soporta object-fit: cover).
+        aspectRatio: 3 / 4,
+        // Área de escaneo cuadrada: 75% del lado menor de la cámara
         qrbox: (width, height) => {
-          const size = Math.max(160, Math.floor(Math.min(width, height) * 0.7));
+          const size = Math.max(180, Math.floor(Math.min(width, height) * 0.75));
           return { width: size, height: size };
         },
       },
@@ -160,11 +163,15 @@ onUnmounted(() => {
 
 
 <style scoped>
-/* The height follows the camera stream, so portrait phone cameras are shown in full */
+/* Portrait 3:4 viewfinder: full width on phones, capped on desktop so it never gets huge */
 .scanner-container {
   position: relative;
+  display: flex;
+  align-items: center;
   width: 100%;
-  min-height: 16rem;
+  max-width: 24rem;
+  margin-inline: auto;
+  aspect-ratio: 3 / 4;
   background: #000;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 1.25rem;
@@ -178,13 +185,13 @@ onUnmounted(() => {
   border: 0 !important;
 }
 
-/* html5-qrcode injects the <video> at runtime, so it needs :deep() to be styled */
+/* html5-qrcode injects the <video> at runtime, so it needs :deep() to be styled.
+   No object-fit: the video keeps its own ratio, otherwise the decode region would drift
+   away from the drawn box. With a 3:4 stream it fills the frame exactly. */
 .scanner :deep(video) {
   display: block;
   width: 100% !important;
   height: auto !important;
-  max-height: 75vh;
-  object-fit: contain;
 }
 
 /* Barra animada */

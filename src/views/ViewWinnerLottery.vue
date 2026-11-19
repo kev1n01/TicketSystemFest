@@ -8,7 +8,7 @@
                     Código: {{ winner.cod }}
                 </p>
                 <p v-else>
-                    DNI: {{ winner.dni }}
+                    DNI: {{ winner.dni ?? winner.cod }}
                 </p>
                 <p>Tipo: {{ winner.type }}</p>
             </div>

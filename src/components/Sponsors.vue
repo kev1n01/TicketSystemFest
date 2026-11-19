@@ -90,26 +90,23 @@ const hideTooltip = () => {
 };
 </script>
 <template>
-    <section id="auspiciadores">
-        <div class="py-10 xs:mx-2">
-            <h1 class="text-center text-3xl font-semibold pb-10">[ Auspiciadores ]</h1>
-            <div class="grid grid-cols-3 gap-3 md:gap-8 max-w-4xl mx-auto">
-                <template v-for="(ls, index) in logosSponsors" :key="index">
-                    <div
-                        class="bg-white backdrop-blur-sm p-4 rounded-xl hover:shadow-xl hover:shadow-red-500/60 transition-all hover:-translate-y-1">
-                        <a :href="ls.url" target="_blank">
-                            <img :src="`/imgs/${ls.image}`" :alt="ls.name" :data-title="ls.name"
-                                class="w-full rounded-lg custom-tooltip" @mouseover="showTooltip(ls.name, $event)"
-                                @mousemove="moveTooltip($event)" @mouseout="hideTooltip" />
-                        </a>
-                    </div>
+    <section id="auspiciadores" class="scroll-mt-24 py-16 sm:py-20">
+        <h2 class="text-2xl font-semibold sm:text-3xl">Auspiciadores</h2>
+        <p class="mt-2 text-white/70">Gracias a quienes hacen posible System Fest.</p>
 
-                    <!-- Tooltip -->
-                    <div v-show="tooltip.visible" :style="tooltip.style" class="tooltip">
-                        {{ tooltip.text }}
-                    </div>
-                </template>
-            </div>
+        <div class="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-5 sm:gap-4">
+            <a v-for="(ls, index) in logosSponsors" :key="index" :href="ls.url" target="_blank"
+                rel="noopener noreferrer"
+                class="block rounded-2xl bg-white p-3 ring-1 ring-white/10 transition-shadow hover:ring-2 hover:ring-flare/70">
+                <img :src="`/imgs/${ls.image}`" :alt="ls.name" loading="lazy"
+                    class="aspect-square w-full rounded-lg object-contain" @mouseover="showTooltip(ls.name, $event)"
+                    @mousemove="moveTooltip($event)" @mouseout="hideTooltip" />
+            </a>
+        </div>
+
+        <!-- Tooltip: one instance for every logo; keep it outside transformed or blurred ancestors -->
+        <div v-show="tooltip.visible" :style="tooltip.style" class="tooltip" aria-hidden="true">
+            {{ tooltip.text }}
         </div>
     </section>
 </template>
@@ -117,21 +114,15 @@ const hideTooltip = () => {
 <style scoped>
 .tooltip {
     position: absolute;
-    background-color: rgba(0, 0, 0, 0.75);
-    color: white;
-    padding: 5px 10px;
-    border-radius: 10px;
-    font-size: 1rem;
-    z-index: 1000;
+    z-index: 60;
     pointer-events: none;
     white-space: nowrap;
-    opacity: 1;
-    border: 1px solid rgba(255, 0, 0, 0.377);
-    transition: opacity 0.2s ease-in-out;
-}
-
-.tooltip.hidden {
-    opacity: 0;
-    visibility: hidden;
+    padding: 0.375rem 0.75rem;
+    border: 1px solid rgb(255 255 255 / 0.15);
+    border-radius: 0.75rem;
+    background-color: rgb(16 14 11 / 0.85);
+    color: #fff;
+    font-size: 0.875rem;
+    backdrop-filter: blur(8px);
 }
 </style>

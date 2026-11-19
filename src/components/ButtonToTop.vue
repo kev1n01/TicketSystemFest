@@ -26,13 +26,9 @@ onUnmounted(() => {
 
 <template>
     <div>
-        <button v-if="isVisible" @click="scrollToTop"
-            class="fixed bottom-4 right-4 bg-[#991B1BCC] text-white rounded-full p-4 transition-transform transform duration-700 hover:scale-110 sm:bottom-8 sm:right-8">
-            <ArrowUp class="w-6 h-6" />
+        <button v-if="isVisible" type="button" @click="scrollToTop" aria-label="Volver arriba"
+            class="fixed bottom-4 right-4 z-40 inline-flex h-12 w-12 items-center justify-center rounded-full border border-white/15 bg-night/70 text-white shadow-[0_12px_30px_-10px_rgba(0,0,0,0.8)] backdrop-blur-xl transition-colors hover:border-ember hover:bg-ember sm:bottom-8 sm:right-8">
+            <ArrowUp class="h-5 w-5" aria-hidden="true" />
         </button>
     </div>
 </template>
-
-<style scoped>
-/* No se requiere CSS adicional porque TailwindCSS maneja los estilos */
-</style>

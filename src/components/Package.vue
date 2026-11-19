@@ -66,42 +66,43 @@ const items = [
 </script>
 
 <template>
-    <section id="paquetes">
-        <div class="py-20 xs:mx-2">
-            <h1 class="text-center text-3xl font-semibold py-10">[ Paquetes ]</h1>
-            <div class="space-y-4 max-w-4xl mx-auto">
-                <template v-for="(item, index) in items" :key="index">
-                    <div
-                        class="bg-black/30 backdrop-blur-sm rounded-xl overflow-hidden border-[1px] border-white/25 transform transition-transform duration-500 ease-in-out">
-                        <div @click="toggleAccordion(index)"
-                            :class="['p-4 font-bold text-xl cursor-pointer hover:bg-red-100/10 transition-colors flex items-center justify-between text-center', isOpen[index] ? 'bg-gradient-to-l from-black/70 to-red-900/60' : '']">
-                            <div class="flex items-center gap-2">
-                                <Package class="w-5" />
-                                <span class="mt-1">
-                                    {{ item.title }}
-                                </span>
-                            </div>
+    <section id="paquetes" class="scroll-mt-24 py-16 sm:py-20">
+        <div class="lg:grid lg:grid-cols-3 lg:gap-10">
+            <div>
+                <h2 class="text-2xl font-semibold sm:text-3xl">Paquetes</h2>
+                <p class="mt-2 text-white/70">Lo que incluye el evento.</p>
+            </div>
 
-                            <div class="flex gap-2 items-center">
-                                {{ item.hour }}
-                                <span class="transform transition-transform duration-400 ease-in-out"
-                                    :class="{ 'rotate-90': isOpen[index] }">
-                                    <ChevronRight />
-                                </span>
-                            </div>
-                        </div>
-                        <div v-show="isOpen[index]" class="p-4 text-gray-300 border-t border-red-900/30">
-                            <p v-for="line in item.parsedDescription.mainDescription" :key="line">
-                                {{ line }}
-                            </p>
-                            <ul class="mt-2 pl-4 list-disc">
-                                <li v-for="line in item.parsedDescription.subDescription" :key="line">
-                                    {{ line.slice(1).trim() }}
-                                </li>
-                            </ul>
-                        </div>
+            <div class="glass-panel mt-6 divide-y divide-white/10 overflow-hidden lg:col-span-2 lg:mt-0">
+                <div v-for="(item, index) in items" :key="index">
+                    <button type="button" @click="toggleAccordion(index)"
+                        class="flex min-h-14 w-full items-center justify-between gap-4 px-5 py-4 text-left text-lg font-semibold transition-colors hover:bg-white/5 sm:px-6"
+                        :class="isOpen[index] ? 'bg-white/5' : ''"
+                        :aria-expanded="isOpen[index]" :aria-controls="`paquete-${index}`">
+                        <span class="flex items-center gap-3">
+                            <Package class="h-5 w-5 shrink-0 text-flare" aria-hidden="true" />
+                            {{ item.title }}
+                        </span>
+
+                        <span class="flex items-center gap-2 text-white/60">
+                            <span v-if="item.hour" class="text-base font-medium">{{ item.hour }}</span>
+                            <ChevronRight class="h-5 w-5 transition-transform duration-300"
+                                :class="{ 'rotate-90': isOpen[index] }" aria-hidden="true" />
+                        </span>
+                    </button>
+                    <div v-show="isOpen[index]" :id="`paquete-${index}`"
+                        class="space-y-1 bg-white/5 px-5 pb-5 text-white/75 sm:px-6 sm:pl-14">
+                        <p v-for="line in item.parsedDescription.mainDescription" :key="line">
+                            {{ line }}
+                        </p>
+                        <ul v-if="item.parsedDescription.subDescription.length"
+                            class="list-disc space-y-1 pl-5 pt-1 marker:text-flare">
+                            <li v-for="line in item.parsedDescription.subDescription" :key="line">
+                                {{ line.slice(1).trim() }}
+                            </li>
+                        </ul>
                     </div>
-                </template>
+                </div>
             </div>
         </div>
     </section>

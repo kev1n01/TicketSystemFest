@@ -6,9 +6,16 @@ module.exports = {
       colors: {
         primary: '#646cff',
         secondary: '#535bf2',
+        // Palette derived from the "Eclipse Flare" aura background + the fest's red glow
+        night: '#100e0b',
+        ink: '#1e2023',
+        stage: '#2d4673',
+        lilac: '#8e7be3',
+        flare: '#f868c4',
+        ember: { DEFAULT: '#da4646', dark: '#b93636' },
       },
       fontFamily: {
-        sans: ['Arial', 'sans-serif'],
+        sans: ['Epilogue', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         epilogue: ['Epilogue', 'sans-serif'],
         russo: ['"Russo One"', 'sans-serif'],
         dastress: ['"Dastress"', 'sans-serif'],

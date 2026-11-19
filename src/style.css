@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Epilogue:wght@100..900');
+@import url('https://fonts.googleapis.com/css2?family=Epilogue:wght@100..900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -8,9 +8,108 @@
 @font-face {
   font-family: 'Dastress';
   src: url('/fonts/dastress.ttf') format('truetype');
+  font-display: swap;
 }
 
-/* Opcionales: Personalización */
-body {
-  @apply bg-gray-100 text-gray-900;
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+
+  /* The Eclipse Flare layers blend against this color (see AuraBackground.vue) */
+  body {
+    @apply bg-night font-sans text-white antialiased;
+  }
+
+  :focus-visible {
+    outline: 2px solid theme('colors.flare');
+    outline-offset: 2px;
+  }
+}
+
+/* Shared building blocks for every view */
+@layer components {
+  .glass-panel {
+    @apply rounded-3xl border border-white/10 bg-night/55 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.8)] backdrop-blur-xl;
+  }
+
+  .field-label {
+    @apply mb-1.5 block text-sm font-medium text-white/75;
+  }
+
+  .field-input {
+    @apply w-full rounded-xl border border-white/15 bg-black/35 px-4 py-3 text-base text-white placeholder:text-white/35 transition-colors focus:border-flare/70 focus:outline-none focus:ring-2 focus:ring-flare/25;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl bg-ember px-5 py-3 font-semibold text-white transition-colors hover:bg-ember-dark disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/5 px-5 py-3 font-semibold text-white transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  /* Active navigation item: no fill, the label lights up softly (like the hero title) over a lit bar */
+  .nav-active,
+  .nav-active-side {
+    @apply relative text-white;
+    text-shadow: 0 0 8px rgb(218 70 70 / 0.75), 0 0 18px rgb(218 70 70 / 0.35);
+  }
+
+  .nav-active::after,
+  .nav-active-side::after {
+    content: "";
+    position: absolute;
+    border-radius: 9999px;
+    background: theme('colors.ember.DEFAULT');
+    box-shadow: 0 0 8px 1px rgb(218 70 70 / 0.8);
+    animation: nav-light-in 240ms ease-out both;
+  }
+
+  /* Horizontal bars: underline */
+  .nav-active::after {
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: 0.3rem;
+    height: 2px;
+  }
+
+  /* Vertical lists (mobile menus, session menu): bar on the left edge */
+  .nav-active-side::after {
+    left: 0.25rem;
+    top: 28%;
+    bottom: 28%;
+    width: 2px;
+  }
+
+  @keyframes nav-light-in {
+    from {
+      opacity: 0;
+      transform: scale(0.4);
+    }
+
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .alert-error {
+    @apply rounded-xl border border-red-400/40 bg-red-500/15 p-3 text-center text-sm font-medium text-red-100;
+  }
+
+  .alert-success {
+    @apply rounded-xl border border-emerald-400/40 bg-emerald-500/15 p-3 text-center text-sm font-medium text-emerald-100;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

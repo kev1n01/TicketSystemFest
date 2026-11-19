@@ -1,25 +1,52 @@
 <template>
-    <DashLayout class="bg-gradient-to-t !from-black/80 !via-black/90 !to-blue-900">
-        <div class="upload-container text-black">
+    <DashLayout>
+        <section class="glass-panel w-full max-w-2xl p-5 sm:p-8">
+            <h1 class="text-2xl font-semibold tracking-tight sm:text-3xl">Cargar participantes</h1>
+            <p class="mt-1.5 max-w-prose text-sm text-white/65 sm:text-base">
+                Sube un Excel por tipo de participante. Se lee la primera hoja: la fila 1 es el encabezado,
+                la columna B el nombre y la columna C el DNI o el código.
+            </p>
 
-            <!-- Botones para cargar archivos -->
-            <h3 class="text-xl">Cargar invitados</h3>
-            <input type="file" @change="handleFileChange($event, 'invitados')" accept=".xlsx, .xls" />
+            <!-- Zonas para cargar archivos: el input cubre la zona, así se puede hacer clic o soltar el archivo -->
+            <div class="mt-6 grid gap-4 sm:grid-cols-2">
+                <label class="relative block">
+                    <input type="file" @change="handleFileChange($event, 'invitados')" accept=".xlsx, .xls"
+                        aria-label="Cargar invitados (archivo .xlsx o .xls)"
+                        class="peer absolute inset-0 z-10 h-full w-full cursor-pointer text-base opacity-0" />
+                    <span
+                        class="flex min-h-40 flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-white/20 bg-white/[0.03] p-5 text-center transition-colors peer-hover:border-lilac/60 peer-hover:bg-lilac/[0.06] peer-focus-visible:border-lilac peer-focus-visible:ring-2 peer-focus-visible:ring-lilac/40">
+                        <FileSpreadsheet class="h-8 w-8 text-lilac" aria-hidden="true" />
+                        <span class="text-lg font-semibold">Invitados</span>
+                        <span class="text-sm text-white/60">Haz clic o suelta aquí un archivo .xlsx o .xls</span>
+                    </span>
+                </label>
 
-            <h3 class="text-xl">Cargar estudiantes</h3>
-            <input type="file" @change="handleFileChange($event, 'estudiantes')" accept=".xlsx, .xls" />
-
-            <!-- Mensajes de estado -->
-
-            <div v-if="loading" class=" text-center flex flex-col  items-center content-center">
-                <LoaderCircle class="animate-spin mr-2 text-center w-10 h-10 text-blue-700/80" />
-                <span>Subiendo datos...</span>
+                <label class="relative block">
+                    <input type="file" @change="handleFileChange($event, 'estudiantes')" accept=".xlsx, .xls"
+                        aria-label="Cargar estudiantes (archivo .xlsx o .xls)"
+                        class="peer absolute inset-0 z-10 h-full w-full cursor-pointer text-base opacity-0" />
+                    <span
+                        class="flex min-h-40 flex-col items-center justify-center gap-2 rounded-2xl border border-dashed border-white/20 bg-white/[0.03] p-5 text-center transition-colors peer-hover:border-lilac/60 peer-hover:bg-lilac/[0.06] peer-focus-visible:border-lilac peer-focus-visible:ring-2 peer-focus-visible:ring-lilac/40">
+                        <FileSpreadsheet class="h-8 w-8 text-lilac" aria-hidden="true" />
+                        <span class="text-lg font-semibold">Estudiantes</span>
+                        <span class="text-sm text-white/60">Haz clic o suelta aquí un archivo .xlsx o .xls</span>
+                    </span>
+                </label>
             </div>
 
-            <p v-if="statusMessage"
-                class="w-80 text-base mb-4 font-semibold text-center p-2 bg-gray-500/20 border border-gray-400 rounded-md">
-                {{ statusMessage }}</p>
-        </div>
+            <!-- Mensajes de estado -->
+            <div class="mt-5 space-y-3 empty:hidden" aria-live="polite">
+                <div v-if="loading"
+                    class="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-3 text-sm font-medium">
+                    <LoaderCircle class="h-5 w-5 shrink-0 animate-spin text-lilac" aria-hidden="true" />
+                    <span>Subiendo datos…</span>
+                </div>
+
+                <p v-if="statusMessage" :class="statusMessage.includes('error') ? 'alert-error' : 'alert-success'">
+                    {{ statusMessage }}
+                </p>
+            </div>
+        </section>
     </DashLayout>
 </template>
 
@@ -27,7 +54,7 @@
 import { ref } from 'vue'
 import * as XLSX from 'xlsx'
 import { dataSource } from '../services/data'
-import { LoaderCircle } from "lucide-vue-next";
+import { LoaderCircle, FileSpreadsheet } from "lucide-vue-next";
 import DashLayout from "../layout/DashLayout.vue";
 
 const statusMessage = ref("")
@@ -102,28 +129,3 @@ const saveParticipants = async (data, type) => {
     }
 }
 </script>
-
-<style scoped>
-.upload-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    background-color: #f4f4f4;
-    border-radius: 8px;
-}
-
-input[type="file"] {
-    margin: 10px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    cursor: pointer;
-    background-color: #fff;
-
-}
-
-p {
-    margin-top: 10px;
-}
-</style>

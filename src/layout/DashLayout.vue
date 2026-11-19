@@ -1,7 +1,7 @@
 <script setup>
 import { computed, ref } from "vue";
 import { useUserStore } from "../stores/userStore";
-import { Terminal, Ticket, LogOut, HistoryIcon, Menu, X, ScanLine, Shuffle, Trophy } from "lucide-vue-next";
+import { Ticket, LogOut, HistoryIcon, Menu, X, ScanLine, Shuffle, Trophy } from "lucide-vue-next";
 import { useRouter, useRoute } from "vue-router";
 import SessionMenu from "../components/SessionMenu.vue";
 
@@ -62,7 +62,6 @@ const esRutaActiva = (ruta) => route.path === ruta;
             <div class="glass-panel flex items-center justify-between gap-4 rounded-2xl px-3 py-2 sm:px-4">
                 <a href="/home" class="flex min-h-11 shrink-0 items-center gap-1.5 px-1 text-xl font-bold tracking-tight">
                     <span class="pt-0.5">PAISI</span>
-                    <Terminal class="h-5 w-5 text-flare" />
                 </a>
 
                 <!-- Menú Desktop -->
@@ -70,8 +69,8 @@ const esRutaActiva = (ruta) => route.path === ruta;
                     <a v-for="link in links" :key="link.href" :href="link.href"
                         class="flex min-h-11 items-center gap-2 rounded-xl px-3 text-sm font-semibold transition-colors"
                         :class="esRutaActiva(link.href)
-                            ? (isAdmin ? 'bg-lilac/20 text-white' : 'bg-ember/20 text-white')
-                            : 'text-white/70 hover:bg-white/5 hover:text-white'"
+                            ? 'nav-active'
+                            : 'text-white/70 hover:text-white'"
                         :aria-current="esRutaActiva(link.href) ? 'page' : undefined">
                         <component :is="link.icon" class="h-4 w-4" />
                         {{ link.label }}
@@ -98,8 +97,8 @@ const esRutaActiva = (ruta) => route.path === ruta;
                 <a v-for="link in links" :key="link.href" :href="link.href"
                     class="flex items-center gap-3 rounded-xl px-4 py-3 font-semibold"
                     :class="esRutaActiva(link.href)
-                        ? (isAdmin ? 'bg-lilac/20' : 'bg-ember/20')
-                        : 'text-white/80 hover:bg-white/5'"
+                        ? 'nav-active-side'
+                        : 'text-white/80 hover:text-white'"
                     :aria-current="esRutaActiva(link.href) ? 'page' : undefined">
                     <component :is="link.icon" class="h-5 w-5" />
                     {{ link.label }}

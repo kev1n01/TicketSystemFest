@@ -2,9 +2,8 @@
 import { ref } from "vue";
 import { ChevronRight } from "lucide-vue-next";
 
-const abiertoPaquete = 0;
-const isOpen = ref(Array(5).fill(false));
-isOpen.value[abiertoPaquete] = true;
+// Todos los paquetes abiertos por defecto; cada uno se puede plegar
+const isOpen = ref(Array(5).fill(true));
 
 const toggleAccordion = (index) => {
     isOpen.value[index] = !isOpen.value[index];

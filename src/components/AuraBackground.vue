@@ -8,6 +8,8 @@
 <template>
   <div class="aura-layer aura-layer-1" aria-hidden="true"></div>
   <div class="aura-layer aura-layer-2" aria-hidden="true"></div>
+  <!-- Film grain over the gradient (under the page content), from an inline SVG noise tile -->
+  <div class="aura-grain" aria-hidden="true"></div>
 </template>
 
 <style scoped>
@@ -33,6 +35,16 @@
   filter: blur(88px);
   opacity: 0.8;
   animation: aura-drift 22s ease-in-out -8s infinite alternate-reverse;
+}
+
+.aura-grain {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  background-size: 220px 220px;
+  /* Normal blend on purpose: the grey noise is neutral under overlay/soft-light on dark reds */
+  opacity: 0.12;
 }
 
 @media (min-width: 768px) {

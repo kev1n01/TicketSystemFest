@@ -36,17 +36,16 @@ const isStudent = computed(() => props.type === "estudiante");
 <template>
   <article id="ticket" class="ticket">
     <!-- Pass body: event and holder -->
-    <div class="rounded-t-[1.75rem] bg-white px-6 pb-6 pt-7 text-ink">
-      <component :is="titleTag" class="font-dastress pl-1 pt-2 text-5xl leading-[1.1] text-ember sm:text-[3.5rem]">System Fest</component>
+    <div class="rounded-t-[1.75rem] bg-white px-6 pb-6 pt-6 text-ink">
+      <span class="inline-flex items-center rounded-full border border-ink/15 px-3 py-1 text-sm font-semibold text-ink/80">
+        {{ isStudent ? "Ticket estudiante" : "Ticket invitado" }}
+      </span>
+      <component :is="titleTag" class="font-dastress mt-3 pl-1 pt-1 text-5xl leading-[1.1] text-ember sm:text-[3.5rem]">System Fest</component>
       <p class="mt-2 text-sm text-ink/65">32.º aniversario de Ingeniería de Sistemas e Informática</p>
 
       <div class="mt-7">
         <p class="break-words text-2xl font-bold leading-tight">{{ fullName }}</p>
         <p class="mt-1 tabular-nums text-ink/70">{{ idLabel }}: {{ idValue }}</p>
-        <span class="mt-4 inline-flex items-center gap-2 rounded-full bg-ink/[0.06] px-3 py-1.5 text-sm font-semibold">
-          <span class="h-2 w-2 rounded-full" :class="isStudent ? 'bg-ember' : 'bg-flare'" aria-hidden="true"></span>
-          {{ isStudent ? "Ticket estudiante" : "Ticket invitado" }}
-        </span>
       </div>
 
       <dl class="mt-7 grid grid-cols-2 gap-4 border-t border-ink/10 pt-5">

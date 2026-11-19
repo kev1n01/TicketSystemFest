@@ -1,6 +1,6 @@
 <script setup>
 import { computed, ref, onMounted, onUnmounted } from "vue";
-import { Menu, X, Terminal } from "lucide-vue-next";
+import { Menu, X } from "lucide-vue-next";
 import { useUserStore } from "../stores/userStore";
 import ButtonPrimarySecondEffect from "./ButtonPrimarySecondEffect.vue";
 import SessionMenu from "./SessionMenu.vue";
@@ -60,28 +60,27 @@ onUnmounted(() => {
             <!-- Logo -->
             <a href="#inicio" class="flex min-h-11 shrink-0 items-center gap-1.5 px-1 text-xl font-bold tracking-tight">
                 <span class="pt-0.5">PAISI</span>
-                <Terminal class="h-5 w-5 text-flare" aria-hidden="true" />
             </a>
 
             <!-- Menú desktop -->
             <div class="hidden items-center gap-1 lg:flex">
                 <a href="#inicio" class="nav-link"
-                    :class="activeSection === '#inicio' ? 'bg-ember/20 text-white' : 'text-white/70 hover:bg-white/5 hover:text-white'"
+                    :class="activeSection === '#inicio' ? 'nav-active' : 'text-white/70 hover:text-white'"
                     :aria-current="activeSection === '#inicio' ? 'location' : undefined">
                     Inicio
                 </a>
                 <a href="#ubicacion" class="nav-link"
-                    :class="activeSection === '#ubicacion' ? 'bg-ember/20 text-white' : 'text-white/70 hover:bg-white/5 hover:text-white'"
+                    :class="activeSection === '#ubicacion' ? 'nav-active' : 'text-white/70 hover:text-white'"
                     :aria-current="activeSection === '#ubicacion' ? 'location' : undefined">
                     Ubicación
                 </a>
                 <a href="#paquetes" class="nav-link"
-                    :class="activeSection === '#paquetes' ? 'bg-ember/20 text-white' : 'text-white/70 hover:bg-white/5 hover:text-white'"
+                    :class="activeSection === '#paquetes' ? 'nav-active' : 'text-white/70 hover:text-white'"
                     :aria-current="activeSection === '#paquetes' ? 'location' : undefined">
                     Paquetes
                 </a>
                 <a href="#auspiciadores" class="nav-link"
-                    :class="activeSection === '#auspiciadores' ? 'bg-ember/20 text-white' : 'text-white/70 hover:bg-white/5 hover:text-white'"
+                    :class="activeSection === '#auspiciadores' ? 'nav-active' : 'text-white/70 hover:text-white'"
                     :aria-current="activeSection === '#auspiciadores' ? 'location' : undefined">
                     Auspiciadores
                 </a>
@@ -108,22 +107,22 @@ onUnmounted(() => {
         <div v-if="isMenuOpen" id="menu-movil" class="glass-panel mt-2 flex flex-col gap-1 rounded-2xl p-2 lg:hidden"
             @click="(event) => { if (event.target.closest('a')) isMenuOpen = false; }">
             <a href="#inicio" class="mobile-link"
-                :class="activeSection === '#inicio' ? 'bg-ember/20' : 'text-white/80 hover:bg-white/5'"
+                :class="activeSection === '#inicio' ? 'nav-active-side' : 'text-white/80 hover:text-white'"
                 :aria-current="activeSection === '#inicio' ? 'location' : undefined">
                 Inicio
             </a>
             <a href="#ubicacion" class="mobile-link"
-                :class="activeSection === '#ubicacion' ? 'bg-ember/20' : 'text-white/80 hover:bg-white/5'"
+                :class="activeSection === '#ubicacion' ? 'nav-active-side' : 'text-white/80 hover:text-white'"
                 :aria-current="activeSection === '#ubicacion' ? 'location' : undefined">
                 Ubicación
             </a>
             <a href="#paquetes" class="mobile-link"
-                :class="activeSection === '#paquetes' ? 'bg-ember/20' : 'text-white/80 hover:bg-white/5'"
+                :class="activeSection === '#paquetes' ? 'nav-active-side' : 'text-white/80 hover:text-white'"
                 :aria-current="activeSection === '#paquetes' ? 'location' : undefined">
                 Paquetes
             </a>
             <a href="#auspiciadores" class="mobile-link"
-                :class="activeSection === '#auspiciadores' ? 'bg-ember/20' : 'text-white/80 hover:bg-white/5'"
+                :class="activeSection === '#auspiciadores' ? 'nav-active-side' : 'text-white/80 hover:text-white'"
                 :aria-current="activeSection === '#auspiciadores' ? 'location' : undefined">
                 Auspiciadores
             </a>

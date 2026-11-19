@@ -141,7 +141,7 @@ onUnmounted(() => {
                 class="glass-panel absolute right-0 top-full z-50 mt-2 flex w-56 max-w-[calc(100vw-2rem)] flex-col gap-0.5 rounded-2xl bg-night/90 p-2"
                 @keydown="onMenuKeydown">
                 <RouterLink v-for="item in items" :key="item.to" :to="item.to" role="menuitem" class="menu-item"
-                    :class="route.path === item.to ? 'bg-white/10 text-white' : 'text-white/80'"
+                    :class="route.path === item.to ? 'nav-active-side' : 'text-white/80'"
                     :aria-current="route.path === item.to ? 'page' : undefined">
                     {{ item.label }}
                 </RouterLink>

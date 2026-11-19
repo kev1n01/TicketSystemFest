@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import { FlaskConical, RotateCcw, X } from "lucide-vue-next";
+import { RotateCcw, X } from "lucide-vue-next";
 import { getDemoCredentials, resetDemoData } from "../services/data/localAdapter";
 
 const open = ref(false);
@@ -16,14 +16,12 @@ const handleReset = () => {
   <div class="fixed bottom-4 left-4 z-50 text-sm">
     <button v-if="!open" type="button" @click="open = true"
       class="glass-panel flex items-center gap-2 rounded-full px-4 py-2 font-semibold text-white hover:bg-white/10">
-      <FlaskConical class="h-4 w-4 text-flare" />
       Modo demo
     </button>
 
     <div v-else class="glass-panel w-72 rounded-2xl p-4 text-white">
       <div class="mb-2 flex items-center justify-between">
         <p class="flex items-center gap-2 font-bold">
-          <FlaskConical class="h-4 w-4 text-flare" />
           Modo demo
         </p>
         <button type="button" @click="open = false" aria-label="Cerrar" class="rounded p-0.5 text-white/60 hover:text-white">

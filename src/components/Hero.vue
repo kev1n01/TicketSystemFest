@@ -13,7 +13,7 @@ const isParticipant = computed(() =>
 );
 </script>
 <template>
-    <section id="hero">
+    <section id="hero" class="flex flex-col">
         <!-- Presentación: el título es la pieza central sobre el aura -->
         <div class="flex flex-col items-center justify-center py-12 text-center sm:py-16"
             :class="isParticipant ? 'min-h-[44vh]' : 'min-h-[64vh]'">
@@ -32,10 +32,12 @@ const isParticipant = computed(() =>
             </ul>
         </div>
 
-        <!-- Participante con sesión: su ticket listo para mostrar en la entrada -->
+        <!-- Participante con sesión: su ticket listo para mostrar en la entrada.
+             En móvil va primero para que el QR se vea sin hacer scroll en la puerta. -->
         <div v-if="isParticipant" id="generate"
-            class="scroll-mt-24 pb-16 sm:pb-20 md:grid md:grid-cols-[minmax(0,1fr)_24rem] md:items-start md:gap-10">
-            <div>
+            class="scroll-mt-24 pb-16 max-md:order-first max-md:pt-6 sm:pb-20 md:grid md:grid-cols-[minmax(0,1fr)_24rem] md:items-start md:gap-10">
+            <!-- En móvil el ticket ya lo dice todo: el encabezado queda solo para lectores de pantalla -->
+            <div class="max-md:sr-only">
                 <h2 class="text-2xl font-semibold sm:text-3xl">Tu ticket</h2>
                 <p class="mt-2 max-w-md text-white/70">Muéstralo en la entrada para registrar tu ingreso.</p>
             </div>

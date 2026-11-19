@@ -113,7 +113,7 @@ export const useUserStore = defineStore("user", () => {
       return {
         success: false,
         message:
-          "Ocurrió un error al generar el ticket, intentelo más tarde.",
+          "Ocurrió un error al generar el ticket, inténtelo más tarde.",
       };
     }
   }
@@ -150,7 +150,7 @@ export const useUserStore = defineStore("user", () => {
       return {
         success: false,
         message:
-          "Ocurrió un error al generar el ticket, intentelo más tarde.",
+          "Ocurrió un error al generar el ticket, inténtelo más tarde.",
       };
     }
   }

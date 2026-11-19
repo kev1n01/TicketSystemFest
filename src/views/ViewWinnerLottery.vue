@@ -20,23 +20,22 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { collection, onSnapshot } from 'firebase/firestore'
-import { db } from '../firebase'
+import { ref, onMounted, onUnmounted } from 'vue'
+import { dataSource } from '../services/data'
 import DashLayout from "../layout/DashLayout.vue";
 
 const winners = ref([])
+let unsubscribeWinners = null
 
 onMounted(() => {
-    const winnersRef = collection(db, 'winners')
-
     // Listener en tiempo real
-    const unsubscribe = onSnapshot(winnersRef, (snapshot) => {
-        winners.value = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-        }))
+    unsubscribeWinners = dataSource.subscribeWinners((list) => {
+        winners.value = list
     })
+})
+
+onUnmounted(() => {
+    unsubscribeWinners?.()
 })
 </script>
 

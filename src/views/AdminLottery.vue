@@ -22,54 +22,33 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-import { collection, query, where, getDocs, addDoc, updateDoc, doc, onSnapshot } from 'firebase/firestore'
-import { db } from '../firebase'
+import { ref, onMounted, onUnmounted } from 'vue'
+import { dataSource } from '../services/data'
 import DashLayout from "../layout/DashLayout.vue";
 
 const isSpinning = ref(false)
 const winners = ref([])
 const loading = ref(false)
 const numberWinner = ref(1)
+let unsubscribeWinners = null
 
-const fetchWinners = async () => {
-    const winnersRef = collection(db, 'winners')
-
+const fetchWinners = () => {
     // Listener en tiempo real
-    const unsubscribe = onSnapshot(winnersRef, (snapshot) => {
-        winners.value = snapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data()
-        }))
+    unsubscribeWinners = dataSource.subscribeWinners((list) => {
+        winners.value = list
     })
 }
 
 const fetchParticipants = async () => {
-    const studentsQuery = query(
-        collection(db, 'estudiantes')
-    )
-    const guestsQuery = query(
-        collection(db, 'invitados')
-    )
-
-    const [studentsSnapshot, guestsSnapshot] = await Promise.all([
-        getDocs(studentsQuery),
-        getDocs(guestsQuery)
+    const [students, guests] = await Promise.all([
+        dataSource.listParticipants('estudiantes'),
+        dataSource.listParticipants('invitados')
     ])
 
-    const students = studentsSnapshot.docs.map(doc => ({
-        ...doc.data(),
-        id: doc.id,
-        type: 'estudiante'
-    }))
-
-    const guests = guestsSnapshot.docs.map(doc => ({
-        ...doc.data(),
-        id: doc.id,
-        type: 'invitado'
-    }))
-
-    return [...students, ...guests]
+    return [
+        ...students.map((student) => ({ ...student, type: 'estudiante' })),
+        ...guests.map((guest) => ({ ...guest, type: 'invitado' }))
+    ]
 }
 
 const startRaffle = async () => {
@@ -95,7 +74,7 @@ const startRaffle = async () => {
         // await updateDoc(docRef, { isWinner: true })
 
         // Guardar en colección de winners
-        return addDoc(collection(db, 'winners'), {
+        return dataSource.addWinner({
             name: winner.nombres,
             cod: winner.cod || winner.dni,
             type: winner.type
@@ -109,6 +88,10 @@ const startRaffle = async () => {
 
 onMounted(() => {
     fetchWinners()
+})
+
+onUnmounted(() => {
+    unsubscribeWinners?.()
 })
 </script>
 

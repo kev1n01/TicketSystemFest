@@ -1,15 +1,6 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import { db } from "../firebase";
-import {
-  collection,
-  query,
-  where,
-  getDocs,
-  updateDoc,
-  doc,
-  serverTimestamp 
-} from "firebase/firestore";
+import { dataSource } from "../services/data";
 import QRCode from "qrcode";
 import bcrypt from "bcryptjs";
 
@@ -25,11 +16,9 @@ export const useUserStore = defineStore("user", () => {
   // Acciones
   async function validateAdmin(usernameInput) {
     try {
-      const adminsRef = collection(db, "admins");
-      const q = query(adminsRef, where("username", "==", usernameInput));
-      const querySnapshot = await getDocs(q);
+      const adminExists = await dataSource.findAdminByUsername(usernameInput);
 
-      if (querySnapshot.empty) {
+      if (!adminExists) {
         return { success: false, message: "Nombre de usuario incorrecto o no existe." };
       }
 
@@ -56,17 +45,13 @@ export const useUserStore = defineStore("user", () => {
         typeParticipant = 'invitado'
       };
 
-      const estudiantesRef = collection(db, collectionName);
-      const q = query(estudiantesRef, where(whereSearch, "==", identifier));
-      const querySnapshot = await getDocs(q);
+      const participant = await dataSource.findParticipant(collectionName, whereSearch, identifier);
 
-      if (querySnapshot.empty) {
+      if (!participant) {
         return { success: false, message: "Usuario no encontrado" };
       }
 
-      const docSnapshot = querySnapshot.docs[0];
-      const userData = docSnapshot.data();
-      const docRef = doc(db, collectionName, docSnapshot.id);
+      const userData = participant.data;
 
       if (userData.status === "registrado") {
         return {
@@ -77,9 +62,8 @@ export const useUserStore = defineStore("user", () => {
         };
       }
 
-      await updateDoc(docRef, {
-        status: "registrado",
-        timestamp: serverTimestamp()
+      await dataSource.updateParticipantStatus(collectionName, participant.id, "registrado", {
+        withTimestamp: true,
       });
       
       userData.status = "registrado";
@@ -98,23 +82,16 @@ export const useUserStore = defineStore("user", () => {
 
   async function updateParticipantStatus(code) {
     try {
-      const estudiantesRef = collection(db, "estudiantes");
-      const q = query(
-        estudiantesRef,
-        where("cod", "==", code)
-      );
-      const querySnapshot = await getDocs(q);
+      const participant = await dataSource.findParticipant("estudiantes", "cod", code);
 
-      if (querySnapshot.empty) {
+      if (!participant) {
         return { success: false, message: "Código incorrecto o no estas registrado como estudiante." };
       }
 
-      const docSnapshot = querySnapshot.docs[0];
-      const docRef = doc(db, "estudiantes", docSnapshot.id);
-      const userData = docSnapshot.data();
+      const userData = participant.data;
 
       if (!userData.status) {
-        await updateDoc(docRef, { status: "no_registrado" });
+        await dataSource.updateParticipantStatus("estudiantes", participant.id, "no_registrado");
         userData.status = "no_registrado";
       }
 
@@ -142,23 +119,16 @@ export const useUserStore = defineStore("user", () => {
   }
   async function updateParticipantGuessStatus(dni) {
     try {
-      const guessRef = collection(db, "invitados");
-      const q = query(
-        guessRef,
-        where("dni", "==", dni)
-      );
-      const querySnapshot = await getDocs(q);
+      const participant = await dataSource.findParticipant("invitados", "dni", dni);
 
-      if (querySnapshot.empty) {
+      if (!participant) {
         return { success: false, message: "DNI incorrecto o no estas registrado como invitados." };
       }
 
-      const docSnapshot = querySnapshot.docs[0];
-      const docRef = doc(db, "invitados", docSnapshot.id);
-      const userData = docSnapshot.data();
+      const userData = participant.data;
 
       if (!userData.status) {
-        await updateDoc(docRef, { status: "no_registrado" });
+        await dataSource.updateParticipantStatus("invitados", participant.id, "no_registrado");
         userData.status = "no_registrado";
       }
 

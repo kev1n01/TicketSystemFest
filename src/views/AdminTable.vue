@@ -1,12 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { db } from "../firebase";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { dataSource } from "../services/data";
 import DashLayout from "../layout/DashLayout.vue";
-
-// Referencia a las colecciones de Firestore
-const estudiantesRef = collection(db, "estudiantes");
-const invitadosRef = collection(db, "invitados");
 
 // Estados reactivos
 const participantes = ref([]);          // Todos los estudiantes e invitados combinados
@@ -19,23 +14,18 @@ const invitadosCantidad = ref([]);
 // Función para formatear fecha
 const formatearFecha = (timestamp) => {
     if (!timestamp) return "Sin registro";
-    const fecha = timestamp.toDate();
     return new Intl.DateTimeFormat("es-ES", {
         dateStyle: "short",
         timeStyle: "short",
-    }).format(fecha);
+    }).format(timestamp);
 };
 
 // Función para obtener estudiantes con status "registrado"
 const obtenerEstudiantesEgresados = async () => {
     try {
-        const q = query(estudiantesRef);
-        const querySnapshot = await getDocs(q);
-
-        const estudiantes = querySnapshot.docs.map((doc) => ({
-            id: doc.id,
+        const estudiantes = (await dataSource.listParticipants("estudiantes")).map((participante) => ({
             tipo: "estudiante",
-            ...doc.data(),
+            ...participante,
         }));
 
         return estudiantes;
@@ -48,13 +38,9 @@ const obtenerEstudiantesEgresados = async () => {
 // Función para obtener invitados con status "registrado"
 const obtenerInvitadosEgresados = async () => {
     try {
-        const q = query(invitadosRef);
-        const querySnapshot = await getDocs(q);
-
-        const invitados = querySnapshot.docs.map((doc) => ({
-            id: doc.id,
+        const invitados = (await dataSource.listParticipants("invitados")).map((participante) => ({
             tipo: "invitado",
-            ...doc.data(),
+            ...participante,
         }));
 
         return invitados;

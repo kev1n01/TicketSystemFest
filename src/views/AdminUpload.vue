@@ -26,8 +26,7 @@
 <script setup>
 import { ref } from 'vue'
 import * as XLSX from 'xlsx'
-import { db } from '../firebase' // Asegúrate de que esto esté configurado correctamente
-import { collection, addDoc } from 'firebase/firestore'
+import { dataSource } from '../services/data'
 import { LoaderCircle } from "lucide-vue-next";
 import DashLayout from "../layout/DashLayout.vue";
 
@@ -70,8 +69,8 @@ const handleFileChange = (event, type) => {
                 }
             })
 
-            // Guardar los datos en Firestore
-            await saveToFirestore(formattedData, type)
+            // Guardar los datos en la fuente de datos (Firestore o demo)
+            await saveParticipants(formattedData, type)
         } catch (error) {
             console.error("Error al procesar el archivo:", error)
             statusMessage.value = "Hubo un error al procesar el archivo. ❌"
@@ -82,23 +81,21 @@ const handleFileChange = (event, type) => {
     reader.readAsBinaryString(file)
 }
 
-// Función para guardar los datos en Firestore
-const saveToFirestore = async (data, type) => {
+// Función para guardar los participantes
+const saveParticipants = async (data, type) => {
     loading.value = true
     try {
-        // Referencia a la colección adecuada en Firestore
         const collectionName = type === 'invitados' ? 'invitados' : 'estudiantes'
-        const collectionRef = collection(db, collectionName)
 
-        // Guardar cada documento en Firestore
+        // Guardar cada documento
         for (const item of data) {
-            await addDoc(collectionRef, item)
+            await dataSource.addParticipant(collectionName, item)
             count.value = count.value + 1
         }
-        
+
         statusMessage.value = `${count.value} registros de ${type} subidos exitosamente. ✅`
     } catch (error) {
-        console.error("Error al guardar en Firestore:", error)
+        console.error("Error al guardar los datos:", error)
         statusMessage.value = "Hubo un error al guardar los datos. ❌"
     } finally {
         loading.value = false

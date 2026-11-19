@@ -1,0 +1,22 @@
+{
+  "admins": [
+    { "id": "admin-1", "username": "admin" }
+  ],
+  "estudiantes": [
+    { "id": "est-01", "nombres": "Lucía Fernández Quispe", "cod": "2020100001" },
+    { "id": "est-02", "nombres": "Diego Ramírez Huamán", "cod": "2020100002" },
+    { "id": "est-03", "nombres": "Valeria Torres Mendoza", "cod": "2020100003", "status": "no_registrado" },
+    { "id": "est-04", "nombres": "Mateo Castillo Rojas", "cod": "2020100004" },
+    { "id": "est-05", "nombres": "Camila Vargas Flores", "cod": "2020100005", "status": "registrado", "timestamp": "2024-11-29T23:15:00.000Z" },
+    { "id": "est-06", "nombres": "Sebastián Chávez Paredes", "cod": "2020100006" },
+    { "id": "est-07", "nombres": "Ana Gutiérrez Salazar", "cod": "2020100007", "status": "registrado", "timestamp": "2024-11-29T23:42:00.000Z" },
+    { "id": "est-08", "nombres": "Joaquín Mendoza Ríos", "cod": "2020100008" }
+  ],
+  "invitados": [
+    { "id": "inv-01", "nombres": "Rosa Huamán Cárdenas", "dni": "12345678" },
+    { "id": "inv-02", "nombres": "Carlos Espinoza Vega", "dni": "23456789", "status": "no_registrado" },
+    { "id": "inv-03", "nombres": "María Poma Alarcón", "dni": "34567890" },
+    { "id": "inv-04", "nombres": "Luis Quispe Mamani", "dni": "45678901", "status": "registrado", "timestamp": "2024-11-30T00:05:00.000Z" }
+  ],
+  "winners": []
+}

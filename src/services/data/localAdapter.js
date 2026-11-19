@@ -12,8 +12,13 @@ const clone = (value) => JSON.parse(JSON.stringify(value));
 
 function loadDb() {
   try {
-    const raw = globalThis.localStorage?.getItem(DEMO_STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
+    const storage = globalThis.localStorage;
+    if (storage) {
+      // A missing key means fresh or reset data (possibly from another tab): start from the seed,
+      // never from this tab's in-memory copy, or a stale tab would resurrect old data.
+      const raw = storage.getItem(DEMO_STORAGE_KEY);
+      return raw ? JSON.parse(raw) : clone(seed);
+    }
   } catch (error) {
     console.warn("[demo] Could not read demo data, using in-memory copy.", error);
   }

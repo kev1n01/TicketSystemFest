@@ -26,13 +26,6 @@
 
       <!-- Resultado del escaneo: debajo de la cámara para que el recuadro no se mueva -->
       <div class="mt-5 space-y-3 empty:hidden" aria-live="polite">
-        <p v-if="messageValidateError !== ''" class="alert-error text-base">
-          {{ messageValidateError }}
-        </p>
-        <p v-if="messageValidateSuccess !== ''" class="alert-success text-base">
-          {{ messageValidateSuccess }}
-        </p>
-
         <!-- Skeleton Loader -->
         <div v-if="loading" class="animate-pulse rounded-2xl border border-white/10 p-4 sm:p-5" aria-hidden="true">
           <div class="h-6 w-2/3 rounded-md bg-white/10"></div>
@@ -71,25 +64,29 @@ import { ref, onMounted, onUnmounted } from "vue";
 import { Html5Qrcode } from "html5-qrcode";
 import { useUserStore } from "../stores/userStore";
 import DashLayout from "../layout/DashLayout.vue";
+import { toast } from "../composables/useToast";
 
 const userStore = useUserStore();
 const participantData = ref(null);
-const messageValidateError = ref(""); // Para manejar mensajes de error
-const messageValidateSuccess = ref(""); // Para manejar mensajes de éxito
 const typeParticipant = ref(""); // Para conocer el tipo de participante
 const loading = ref(false); // Estado para el skeleton loader
 const isScanning = ref(false); // Estado para controlar si ya se está procesando un código
 
 let html5QrCode = null;
 
+// html5-qrcode fires on every frame that decodes, so the QR just processed is read again right
+// away and its result flipped to "ya utilizó su entrada". Ignoring that same code for a moment
+// keeps the real result (and its toast) on screen.
+const SAME_CODE_COOLDOWN_MS = 4000;
+let lastScan = { text: "", at: 0 };
+
 // Manejo del escaneo QR
 const onDecode = async (decodedString) => {
   if (isScanning.value) return; // Evitar múltiples escaneos
+  if (decodedString === lastScan.text && Date.now() - lastScan.at < SAME_CODE_COOLDOWN_MS) return;
 
   isScanning.value = true; // Bloquear nuevos escaneos mientras se procesa
   try {
-    messageValidateError.value = "";
-    messageValidateSuccess.value = "";
     typeParticipant.value = "";
     participantData.value = null;
     loading.value = true; // Mostrar el loader
@@ -100,19 +97,20 @@ const onDecode = async (decodedString) => {
         typeParticipant.value = result.type;
         participantData.value = result.data;
       }
-      messageValidateError.value = result.message;
+      // Only the latest scan result stays on screen. The camera keeps reading the same QR:
+      // an identical notice is refreshed instead of stacked
+      toast.error(result.message, { title: "Ingreso no registrado", exclusive: true });
       return;
     }
 
-    if (result.success) {
-      participantData.value = result.data;
-      messageValidateSuccess.value = result.message;
-      typeParticipant.value = result.type;
-    }
+    participantData.value = result.data;
+    typeParticipant.value = result.type;
+    toast.success(result.message, { title: "Ingreso registrado", exclusive: true });
   } catch (error) {
-    messageValidateError.value = "Ocurrió un error durante el escaneo. Intenta nuevamente.";
+    toast.error("Ocurrió un error durante el escaneo. Intenta nuevamente.");
   } finally {
     loading.value = false; // Ocultar el loader siempre
+    lastScan = { text: decodedString, at: Date.now() }; // the cooldown starts once the result is shown
     isScanning.value = false; // Desbloquear escaneo
   }
 };

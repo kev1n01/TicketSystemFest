@@ -41,7 +41,7 @@ const isStudent = computed(() => props.type === "estudiante");
         {{ isStudent ? "Ticket estudiante" : "Ticket invitado" }}
       </span>
       <component :is="titleTag" class="font-dastress mt-3 pl-1 pt-1 text-5xl leading-[1.1] text-ember sm:text-[3.5rem]">System Fest</component>
-      <p class="mt-2 text-sm text-ink/65">32.º aniversario de Ingeniería de Sistemas e Informática</p>
+      <p class="mt-2 text-sm text-ink/65">Almuerzo de Confraternidad, 34.º aniversario de Ingeniería de Sistemas e Informática</p>
 
       <div class="mt-7">
         <p class="break-words text-2xl font-bold leading-tight">{{ fullName }}</p>
@@ -51,15 +51,15 @@ const isStudent = computed(() => props.type === "estudiante");
       <dl class="mt-7 grid grid-cols-2 gap-4 border-t border-ink/10 pt-5">
         <div>
           <dt class="text-xs text-ink/65">Fecha</dt>
-          <dd class="mt-0.5 text-sm font-semibold">29 de noviembre</dd>
+          <dd class="mt-0.5 text-sm font-semibold">28 de noviembre</dd>
         </div>
         <div>
           <dt class="text-xs text-ink/65">Hora</dt>
-          <dd class="mt-0.5 text-sm font-semibold">1:00 p. m.</dd>
+          <dd class="mt-0.5 text-sm font-semibold">12:30 p. m.</dd>
         </div>
         <div class="col-span-2">
           <dt class="text-xs text-ink/65">Lugar</dt>
-          <dd class="mt-0.5 text-sm font-semibold">Mistika casa club</dd>
+          <dd class="mt-0.5 text-sm font-semibold">Mistika Casa Club</dd>
         </div>
       </dl>
     </div>

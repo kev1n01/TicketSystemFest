@@ -14,17 +14,19 @@ const hasSession = computed(() =>
     Boolean(userStore.username) || Boolean(userStore.userQr && (userStore.userCode || userStore.userDni))
 );
 
+// Same order as the sections on the page. Sponsors are hidden for now (see Home.vue).
+const links = [
+    { href: "#inicio", label: "Inicio" },
+    { href: "#programacion", label: "Programación" },
+    { href: "#ubicacion", label: "Ubicación" },
+];
+
 const toggleMenu = () => {
     isMenuOpen.value = !isMenuOpen.value;
 };
 
 const updateActiveSection = () => {
-    const sections = [
-        { id: "#inicio", element: document.querySelector("#inicio") },
-        { id: "#paquetes", element: document.querySelector("#paquetes") },
-        { id: "#auspiciadores", element: document.querySelector("#auspiciadores") },
-        { id: "#ubicacion", element: document.querySelector("#ubicacion") },
-    ];
+    const sections = links.map((link) => ({ id: link.href, element: document.querySelector(link.href) }));
 
     for (const section of sections) {
         if (section.element) {
@@ -64,25 +66,10 @@ onUnmounted(() => {
             <!-- Derecha: enlaces (desktop), sesión y menú hamburguesa (móvil). El CTA vive en el hero. -->
             <div class="flex min-w-0 items-center gap-1">
                 <div class="hidden items-center gap-1 lg:flex">
-                    <a href="#inicio" class="nav-link"
-                        :class="activeSection === '#inicio' ? 'nav-active' : 'text-white/70 hover:text-white'"
-                        :aria-current="activeSection === '#inicio' ? 'location' : undefined">
-                        Inicio
-                    </a>
-                    <a href="#ubicacion" class="nav-link"
-                        :class="activeSection === '#ubicacion' ? 'nav-active' : 'text-white/70 hover:text-white'"
-                        :aria-current="activeSection === '#ubicacion' ? 'location' : undefined">
-                        Ubicación
-                    </a>
-                    <a href="#paquetes" class="nav-link"
-                        :class="activeSection === '#paquetes' ? 'nav-active' : 'text-white/70 hover:text-white'"
-                        :aria-current="activeSection === '#paquetes' ? 'location' : undefined">
-                        Paquetes
-                    </a>
-                    <a href="#auspiciadores" class="nav-link"
-                        :class="activeSection === '#auspiciadores' ? 'nav-active' : 'text-white/70 hover:text-white'"
-                        :aria-current="activeSection === '#auspiciadores' ? 'location' : undefined">
-                        Auspiciadores
+                    <a v-for="link in links" :key="link.href" :href="link.href" class="nav-link"
+                        :class="activeSection === link.href ? 'nav-active' : 'text-white/70 hover:text-white'"
+                        :aria-current="activeSection === link.href ? 'location' : undefined">
+                        {{ link.label }}
                     </a>
                 </div>
 
@@ -101,25 +88,10 @@ onUnmounted(() => {
         <!-- Menú móvil -->
         <div v-if="isMenuOpen" id="menu-movil" class="glass-panel mt-2 flex flex-col gap-1 rounded-2xl p-2 lg:hidden"
             @click="(event) => { if (event.target.closest('a')) isMenuOpen = false; }">
-            <a href="#inicio" class="mobile-link"
-                :class="activeSection === '#inicio' ? 'nav-active-side' : 'text-white/80 hover:text-white'"
-                :aria-current="activeSection === '#inicio' ? 'location' : undefined">
-                Inicio
-            </a>
-            <a href="#ubicacion" class="mobile-link"
-                :class="activeSection === '#ubicacion' ? 'nav-active-side' : 'text-white/80 hover:text-white'"
-                :aria-current="activeSection === '#ubicacion' ? 'location' : undefined">
-                Ubicación
-            </a>
-            <a href="#paquetes" class="mobile-link"
-                :class="activeSection === '#paquetes' ? 'nav-active-side' : 'text-white/80 hover:text-white'"
-                :aria-current="activeSection === '#paquetes' ? 'location' : undefined">
-                Paquetes
-            </a>
-            <a href="#auspiciadores" class="mobile-link"
-                :class="activeSection === '#auspiciadores' ? 'nav-active-side' : 'text-white/80 hover:text-white'"
-                :aria-current="activeSection === '#auspiciadores' ? 'location' : undefined">
-                Auspiciadores
+            <a v-for="link in links" :key="link.href" :href="link.href" class="mobile-link"
+                :class="activeSection === link.href ? 'nav-active-side' : 'text-white/80 hover:text-white'"
+                :aria-current="activeSection === link.href ? 'location' : undefined">
+                {{ link.label }}
             </a>
         </div>
     </nav>

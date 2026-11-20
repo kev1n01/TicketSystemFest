@@ -10,7 +10,8 @@ const mapLink = "https://maps.app.goo.gl/86TGP1KvfbczNvyb8";
         <div class="lg:grid lg:grid-cols-3 lg:gap-10">
             <div>
                 <h2 class="text-2xl font-semibold sm:text-3xl">Ubicación</h2>
-                <address class="mt-2 not-italic text-white/70">
+                <p class="mt-2 text-white/70">Almuerzo de Confraternidad, 28 de noviembre.</p>
+                <address class="mt-1 not-italic text-white/70">
                     Mistika Casa Club, Jr. La Estancia S/N, Urb. Santa María del Huallaga
                 </address>
                 <a :href="mapLink" target="_blank" rel="noopener noreferrer" class="btn-secondary mt-6 min-h-11">

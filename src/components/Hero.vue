@@ -17,8 +17,10 @@ const isParticipant = computed(() =>
         <!-- Presentación: el título es la pieza central sobre el aura -->
         <div class="flex flex-col items-center justify-center py-12 text-center sm:py-16"
             :class="isParticipant ? 'min-h-[44vh]' : 'min-h-[64vh]'">
-            <p class="text-lg font-semibold sm:text-xl">32 aniversario</p>
-            <p class="mt-1 text-base text-white/70 sm:text-lg">Ingeniería de Sistemas e Informática</p>
+            <p class="text-2xl font-bold sm:text-4xl">34.º aniversario</p>
+            <p class="mt-2 text-base text-white/70 sm:text-lg">
+                <abbr title="Programa Académico" class="no-underline">P.A.</abbr> Ingeniería de Sistemas e Informática
+            </p>
 
             <h1
                 class="mt-6 font-dastress text-[clamp(3.25rem,16vw,9.5rem)] leading-none tracking-wider text-shadow-redGlow animate-pulse2 sm:mt-8">
@@ -26,9 +28,9 @@ const isParticipant = computed(() =>
             </h1>
 
             <ul class="mt-8 flex flex-wrap justify-center gap-2 text-sm sm:mt-10 sm:gap-3 sm:text-base">
-                <li class="fact-chip">29 de noviembre</li>
-                <li class="fact-chip">01:00 PM hasta el día siguiente</li>
-                <li class="fact-chip">Mistika casa club</li>
+                <li class="fact-chip">Almuerzo de Confraternidad</li>
+                <li class="fact-chip">28 de noviembre, 12:30 p. m.</li>
+                <li class="fact-chip">Mistika Casa Club</li>
             </ul>
 
             <!-- Sin sesión: un solo punto de entrada; estudiante o invitado se elige en el formulario -->

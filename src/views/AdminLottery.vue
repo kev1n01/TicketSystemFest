@@ -58,9 +58,7 @@
                         <p v-if="isSampled" class="mt-1 text-sm text-white/60">
                             Se muestran {{ WHEEL_SLOTS }} participantes al azar en la ruleta; el ganador sale de
                             todos.
-                        </p>
-                        <p v-if="errorMessage" class="alert-error mt-4" role="alert">{{ errorMessage }}</p>
-                    </section>
+                        </p>                    </section>
 
                     <section class="glass-panel w-full p-5 text-left sm:p-6" aria-labelledby="ganadores-titulo">
                         <div class="flex items-baseline justify-between gap-3">
@@ -100,6 +98,7 @@ import { ref, computed, nextTick, onMounted, onUnmounted } from 'vue'
 import { dataSource } from '../services/data'
 import DashLayout from "../layout/DashLayout.vue";
 import RaffleWheel from "../components/RaffleWheel.vue";
+import { toast } from "../composables/useToast";
 
 // The wheel stays readable up to this many names; bigger draws show a random sample that includes the winner
 const WHEEL_SLOTS = 12
@@ -111,7 +110,6 @@ const wheelPool = ref([]) // participants drawn on the wheel, in segment order
 const participantCount = ref(null)
 const currentWinner = ref(null)
 const revealKey = ref(0)
-const errorMessage = ref('')
 let unsubscribeWinners = null
 
 const isSampled = computed(() => participantCount.value > WHEEL_SLOTS)
@@ -175,7 +173,6 @@ const startRaffle = async () => {
     if (isSpinning.value) return
 
     isSpinning.value = true
-    errorMessage.value = ''
     currentWinner.value = null
 
     try {
@@ -215,11 +212,12 @@ const startRaffle = async () => {
             })
         } catch (error) {
             console.error(error)
-            errorMessage.value = 'No se pudo guardar este ganador en la lista. Anota su nombre antes de sortear de nuevo.'
+            // Longer on screen: staff must write the name down before the next draw
+            toast.error('No se pudo guardar este ganador en la lista. Anota su nombre antes de sortear de nuevo.', { duration: 12000 })
         }
     } catch (error) {
         console.error(error)
-        errorMessage.value = 'No se pudo completar el sorteo. Revisa la conexión e inténtalo de nuevo.'
+        toast.error('No se pudo completar el sorteo. Revisa la conexión e inténtalo de nuevo.')
     } finally {
         isSpinning.value = false
     }

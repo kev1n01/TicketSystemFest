@@ -6,15 +6,6 @@
         Ingresa tu usuario de staff para escanear tickets y gestionar el sorteo.
       </p>
 
-      <div class="mt-6 space-y-3 empty:hidden" aria-live="polite">
-        <p v-if="messageValidateError !== ''" class="alert-error">
-          {{ messageValidateError }}
-        </p>
-        <p v-if="messageValidateSuccess !== ''" class="alert-success">
-          {{ messageValidateSuccess }}
-        </p>
-      </div>
-
       <!-- Usuario -->
       <div class="mt-6">
         <label for="username" class="field-label">Nombre de usuario</label>
@@ -43,43 +34,36 @@ import { ref } from "vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "../stores/userStore";
 import { LoaderCircle, ArrowLeft } from "lucide-vue-next";
+import { toast } from "../composables/useToast";
 
 const router = useRouter();
 const userStore = useUserStore();
-const messageValidateError = ref("");
-const messageValidateSuccess = ref("");
 const username = ref("");
 const loading = ref(false);
 
 const handleLogin = async () => {
+  if (loading.value) return;
+
+  if (!username.value) {
+    toast.error("El campo de nombre de usuario es obligatorio.");
+    return;
+  }
+
+  loading.value = true;
   try {
-    loading.value = true;
-    messageValidateError.value = "";
-    messageValidateSuccess.value = "";
-
-    if (!username.value) {
-      messageValidateError.value = "El campo de nombre de usuario es obligatorio.";
-      return;
-    }
-
     const result = await userStore.validateAdmin(username.value);
 
-    if (!result.success) {
-      messageValidateError.value = result.message;
+    if (result.success) {
+      toast.success(result.message, { title: "Sesión iniciada", exclusive: true });
+      // The toast stays visible on the scanner; the form stays locked until it opens
+      setTimeout(() => router.push("/scanner"), 600);
       return;
     }
 
-    if (result.success) {
-      messageValidateSuccess.value = result.message;
-      setTimeout(() => {
-        router.push("/scanner");
-      }, 2000);
-      
-    }
+    toast.error(result.message, { title: "No se pudo iniciar sesión" });
   } catch (err) {
-    messageValidateError.value = "Error al iniciar sesión";
-  } finally {
-    loading.value = false;
+    toast.error("Error al iniciar sesión");
   }
+  loading.value = false;
 };
 </script>

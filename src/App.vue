@@ -6,12 +6,15 @@
       <router-view />
       <DemoModeBanner v-if="DemoModeBanner" />
     </div>
+    <!-- App-wide notifications (see composables/useToast.js) -->
+    <ToastHost />
   </div>
 </template>
 
 <script setup>
 import { defineAsyncComponent } from "vue";
 import AuraBackground from "./components/AuraBackground.vue";
+import ToastHost from "./components/ToastHost.vue";
 import { isDemoMode } from "./services/data";
 
 // Only loaded when the app runs on demo data (no Firebase credentials).

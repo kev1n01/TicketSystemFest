@@ -72,7 +72,7 @@ export const useUserStore = defineStore("user", () => {
       return {
         success: true,
         type: typeParticipant,
-        message: `Entrada registrado exitosamente, bienvenido ${userData.nombres} diviertete.`,
+        message: `Entrada registrada. Bienvenido, ${userData.nombres}. ¡Diviértete!`,
         data: userData,
       };
     } catch (error) {
@@ -85,7 +85,7 @@ export const useUserStore = defineStore("user", () => {
       const participant = await dataSource.findParticipant("estudiantes", "cod", code);
 
       if (!participant) {
-        return { success: false, message: "Código incorrecto o no estas registrado como estudiante." };
+        return { success: false, message: "Código incorrecto o no estás registrado como estudiante." };
       }
 
       const userData = participant.data;
@@ -102,11 +102,11 @@ export const useUserStore = defineStore("user", () => {
       userFullName.value = userData.nombres;
 
       if (userData.status === "no_registrado") {
-        return { success: true, message: `Hola, ${userData.nombres}. tu ticket se generó correctamente` };
+        return { success: true, message: `Hola, ${userData.nombres}. Tu ticket se generó correctamente.` };
       } else {
         return {
           success: true,
-          message: `Bienvenido de nuevo ${userData.nombres}`,
+          message: `Bienvenido de nuevo, ${userData.nombres}.`,
         };
       }
     } catch (error) {
@@ -122,7 +122,7 @@ export const useUserStore = defineStore("user", () => {
       const participant = await dataSource.findParticipant("invitados", "dni", dni);
 
       if (!participant) {
-        return { success: false, message: "DNI incorrecto o no estas registrado como invitados." };
+        return { success: false, message: "DNI incorrecto o no estás registrado como invitado." };
       }
 
       const userData = participant.data;
@@ -139,11 +139,11 @@ export const useUserStore = defineStore("user", () => {
       userFullName.value = userData.nombres;
 
       if (userData.status === "no_registrado") {
-        return { success: true, message: `Hola, ${userData.nombres}. tu ticket se generó correctamente` };
+        return { success: true, message: `Hola, ${userData.nombres}. Tu ticket se generó correctamente.` };
       } else {
         return {
           success: true,
-          message: `Bienvenido de nuevo ${userData.nombres}`,
+          message: `Bienvenido de nuevo, ${userData.nombres}.`,
         };
       }
     } catch (error) {

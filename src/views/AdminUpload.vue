@@ -41,10 +41,6 @@
                     <LoaderCircle class="h-5 w-5 shrink-0 animate-spin text-lilac" aria-hidden="true" />
                     <span>Subiendo datos…</span>
                 </div>
-
-                <p v-if="statusMessage" :class="statusMessage.includes('error') ? 'alert-error' : 'alert-success'">
-                    {{ statusMessage }}
-                </p>
             </div>
         </section>
     </DashLayout>
@@ -56,8 +52,8 @@ import * as XLSX from 'xlsx'
 import { dataSource } from '../services/data'
 import { LoaderCircle, FileSpreadsheet } from "lucide-vue-next";
 import DashLayout from "../layout/DashLayout.vue";
+import { toast } from "../composables/useToast";
 
-const statusMessage = ref("")
 const loading = ref(false)
 const count = ref(0)
 
@@ -100,7 +96,7 @@ const handleFileChange = (event, type) => {
             await saveParticipants(formattedData, type)
         } catch (error) {
             console.error("Error al procesar el archivo:", error)
-            statusMessage.value = "Hubo un error al procesar el archivo. ❌"
+            toast.error("Hubo un error al procesar el archivo.")
         }
     }
 
@@ -120,10 +116,10 @@ const saveParticipants = async (data, type) => {
             count.value = count.value + 1
         }
 
-        statusMessage.value = `${count.value} registros de ${type} subidos exitosamente. ✅`
+        toast.success(`${count.value} registros de ${type} subidos exitosamente.`, { title: "Datos cargados" })
     } catch (error) {
         console.error("Error al guardar los datos:", error)
-        statusMessage.value = "Hubo un error al guardar los datos. ❌"
+        toast.error("Hubo un error al guardar los datos.")
     } finally {
         loading.value = false
     }
